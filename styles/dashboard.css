@@ -1,0 +1,635 @@
+/* NaoTrades Premium Purplish Dashboard & Landing Theme Override */
+
+/* Main Custom Dashboard Wrapper */
+#custom-dashboard {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: calc(100vh - 120px);
+    background-color: #060212;
+    background-image: radial-gradient(rgba(167, 139, 250, 0.08) 1.5px, transparent 1.5px);
+    background-size: 28px 28px;
+    background-position: center;
+    padding: 60px 24px;
+    box-sizing: border-box;
+    font-family: 'Outfit', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: #f8fafc;
+    overflow-y: auto;
+}
+
+#custom-dashboard.active {
+    display: flex;
+}
+
+/* Greeting Section */
+.db-greeting-section {
+    text-align: center;
+    margin-bottom: 48px;
+    animation: fadeInDown 0.6s ease-out;
+}
+
+.db-greeting-title {
+    font-size: 3.6rem;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 0 0 12px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.db-greeting-title span.username {
+    color: #a78bfa;
+    text-shadow: 0 0 12px rgba(167, 139, 250, 0.3);
+}
+
+.db-greeting-subtitle {
+    font-size: 1.6rem;
+    font-style: italic;
+    color: #9d9db5;
+    margin: 0;
+    font-weight: 400;
+}
+
+/* Quick Actions Section */
+.db-quick-actions-wrapper {
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    animation: fadeInUp 0.7s ease-out;
+}
+
+.db-quick-actions-label {
+    display: block;
+    text-align: center;
+    font-size: 1.1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #6d6d8c;
+    letter-spacing: 2px;
+    margin-bottom: 24px;
+}
+
+.db-quick-actions-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    width: 100%;
+}
+
+/* Card Styling */
+.db-action-card {
+    background: rgba(22, 12, 45, 0.4);
+    border: 1px solid rgba(167, 139, 250, 0.06);
+    border-radius: 20px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+    position: relative;
+    cursor: pointer;
+    box-sizing: border-box;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(10px);
+}
+
+/* Icon Containers & SVGs */
+.db-card-icon-container {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    background: rgba(167, 139, 250, 0.04);
+    border: 1px solid rgba(167, 139, 250, 0.08);
+    transition: transform 0.3s ease;
+}
+
+.db-action-card:hover .db-card-icon-container {
+    transform: scale(1.1) rotate(2deg);
+}
+
+/* Top Right Arrow Indicator */
+.db-card-arrow {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 1px solid rgba(167, 139, 250, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(167, 139, 250, 0.4);
+    transition: all 0.3s ease;
+    font-size: 1rem;
+}
+
+.db-action-card:hover .db-card-arrow {
+    border-color: currentColor;
+    color: inherit;
+    transform: translate(2px, -2px);
+}
+
+/* Card Content styling */
+.db-card-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0 0 10px 0;
+}
+
+.db-card-desc {
+    font-size: 1.35rem;
+    line-height: 1.6;
+    color: #a5a5c5;
+    margin: 0 0 24px 0;
+    flex-grow: 1;
+}
+
+.db-card-link {
+    font-size: 1.4rem;
+    font-weight: 700;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: gap 0.2s ease;
+}
+
+.db-action-card:hover .db-card-link {
+    gap: 10px;
+}
+
+/* Purple Theme Action Cards */
+/* Upload Bot (Purple-blue) */
+.db-card-upload {
+    --card-theme: #818cf8;
+}
+.db-card-upload .db-card-icon-container {
+    color: #818cf8;
+    background: rgba(129, 140, 248, 0.08);
+}
+.db-card-upload .db-card-link {
+    color: #c084fc; 
+}
+.db-card-upload:hover {
+    border-color: rgba(129, 140, 248, 0.3);
+    box-shadow: 0 12px 30px -10px rgba(129, 140, 248, 0.25);
+    background: rgba(22, 12, 45, 0.55);
+}
+
+/* Free Bots (Lavender) */
+.db-card-free {
+    --card-theme: #c084fc;
+}
+.db-card-free .db-card-icon-container {
+    color: #c084fc;
+    background: rgba(192, 132, 252, 0.08);
+}
+.db-card-free .db-card-link {
+    color: #c084fc;
+}
+.db-card-free:hover {
+    border-color: rgba(192, 132, 252, 0.3);
+    box-shadow: 0 12px 30px -10px rgba(192, 132, 252, 0.25);
+    background: rgba(22, 12, 45, 0.55);
+}
+
+/* Bot Editor (Deep Purple) */
+.db-card-editor {
+    --card-theme: #a78bfa;
+}
+.db-card-editor .db-card-icon-container {
+    color: #a78bfa;
+    background: rgba(167, 139, 250, 0.08);
+}
+.db-card-editor .db-card-link {
+    color: #a78bfa;
+}
+.db-card-editor:hover {
+    border-color: rgba(167, 139, 250, 0.3);
+    box-shadow: 0 12px 30px -10px rgba(167, 139, 250, 0.25);
+    background: rgba(22, 12, 45, 0.55);
+}
+
+/* Quick Strategy (Pink/Violet) */
+.db-card-strategy {
+    --card-theme: #f472b6;
+}
+.db-card-strategy .db-card-icon-container {
+    color: #f472b6;
+    background: rgba(244, 114, 182, 0.08);
+}
+.db-card-strategy .db-card-link {
+    color: #f472b6;
+}
+.db-card-strategy:hover {
+    border-color: rgba(244, 114, 182, 0.3);
+    box-shadow: 0 12px 30px -10px rgba(244, 114, 182, 0.25);
+    background: rgba(22, 12, 45, 0.55);
+}
+
+/* Partner Referral Card */
+.db-partner-card {
+    width: 100%;
+    max-width: 1100px;
+    margin: 40px auto 0 auto;
+    background: linear-gradient(90deg, rgba(26, 14, 52, 0.5) 0%, rgba(10, 5, 23, 0.3) 100%);
+    border: 1px solid rgba(167, 139, 250, 0.08);
+    border-radius: 20px;
+    padding: 24px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+    animation: fadeInUp 0.8s ease-out;
+}
+
+.db-partner-left-space {
+    width: 80px;
+    flex-shrink: 0;
+}
+
+.db-partner-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    margin-left: 20px;
+}
+
+.db-partner-subtitle {
+    font-size: 1.15rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #a78bfa; 
+    letter-spacing: 1px;
+    margin: 0 0 6px 0;
+}
+
+.db-partner-title {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 0;
+}
+
+.db-partner-btn {
+    background: rgba(167, 139, 250, 0.12);
+    border: 1px solid #a78bfa;
+    color: #a78bfa;
+    padding: 10px 24px;
+    border-radius: 30px;
+    font-size: 1.35rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    outline: none;
+}
+
+.db-partner-btn:hover {
+    background: #8b5cf6;
+    border-color: #8b5cf6;
+    color: #ffffff;
+    box-shadow: 0 4px 15px rgba(139, 92, 246, 0.45);
+}
+
+/* ==========================================
+   GLOBAL BRAND OVERRIDES (NaoTrades Purplish Theme)
+   ========================================== */
+
+/* 1. Logo Branding */
+.landing-page__header-logo-db, 
+.cl__logo-db {
+    color: #a78bfa !important; /* Green -> Purple */
+    text-shadow: 0 0 10px rgba(167, 139, 250, 0.2);
+}
+
+.landing-page__header-logo-traders, 
+.cl__logo-traders {
+    color: #f472b6 !important; /* Red -> Pink/Violet */
+    text-shadow: 0 0 10px rgba(244, 114, 182, 0.2);
+}
+
+.landing-page__hero-typewriter-title-db {
+    color: #a78bfa !important;
+}
+
+.landing-page__hero-typewriter-title-traders {
+    color: #f472b6 !important;
+}
+
+/* 2. Landing Page Buttons */
+.landing-page__header-login-button,
+.landing-page__hero-cta-button,
+.landing-page__cta-button {
+    background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%) !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(167, 139, 250, 0.4) !important;
+    box-shadow: 0 4px 15px rgba(139, 92, 246, 0.35) !important;
+    transition: all 0.3s ease !important;
+}
+
+.landing-page__header-login-button:hover,
+.landing-page__hero-cta-button:hover,
+.landing-page__cta-button:hover {
+    background: linear-gradient(135deg, #a78bfa 0%, #818cf8 100%) !important;
+    box-shadow: 0 4px 20px rgba(167, 139, 250, 0.55) !important;
+    transform: translateY(-1px);
+}
+
+/* 3. Testimonial Cards */
+.landing-page__testimonial-card {
+    background: rgba(22, 12, 45, 0.35) !important;
+    border: 1px solid rgba(167, 139, 250, 0.08) !important;
+    backdrop-filter: blur(10px) !important;
+    transition: all 0.3s ease !important;
+}
+
+.landing-page__testimonial-card:hover {
+    border-color: rgba(167, 139, 250, 0.25) !important;
+    box-shadow: 0 12px 30px -10px rgba(139, 92, 246, 0.2) !important;
+    transform: translateY(-3px) !important;
+}
+
+/* 4. Landing Page backgrounds */
+.landing-page {
+    background-color: #060212 !important;
+    background-image: radial-gradient(circle at top, rgba(139, 92, 246, 0.15) 0%, #060212 70%) !important;
+}
+
+.bot-dashboard {
+    background-color: #060212 !important;
+}
+
+/* 5. Custom AI Scanner overrides */
+.ai-scanner-button__radar-beam {
+    background: conic-gradient(from 0deg, transparent 50%, rgba(139, 92, 246, 0.4) 100%) !important;
+}
+.ai-scanner-button__status-dot {
+    background-color: #a78bfa !important;
+    box-shadow: 0 0 8px #a78bfa !important;
+}
+.ai-scanner-button--pulsing {
+    box-shadow: 0 0 0 0 rgba(167, 139, 250, 0.4) !important;
+}
+
+/* Animations */
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Override rules for active/inactive view toggling via JS */
+.bot-dashboard .main__run-strategy-wrapper {
+    z-index: 10;
+}
+
+/* Hide workspace blockly div when dashboard is active */
+.bot-dashboard.dashboard-active .bot-builder {
+    display: none !important;
+}
+
+.bot-dashboard.dashboard-active .risk-disclaimer-icon,
+.bot-dashboard.dashboard-active .risk-disclaimer-text {
+    z-index: 10;
+}
+
+/* Responsiveness */
+@media (max-width: 1024px) {
+    .db-quick-actions-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+    }
+    .db-greeting-title {
+        font-size: 3rem;
+    }
+}
+
+@media (max-width: 640px) {
+    #custom-dashboard {
+        padding: 40px 16px;
+    }
+    .db-quick-actions-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    .db-partner-card {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+        padding: 24px;
+    }
+    .db-partner-left-space {
+        display: none;
+    }
+    .db-partner-content {
+        margin-left: 0;
+    }
+    .db-partner-btn {
+        width: 100%;
+        text-align: center;
+    }
+    .db-greeting-title {
+        font-size: 2.6rem;
+    }
+}
+
+/* Header Navigation Styles (Pointers on the Header) */
+.landing-page__header-nav {
+    display: flex;
+    gap: 30px;
+    align-items: center;
+}
+.landing-page__header-nav-link {
+    color: #a5a5c5;
+    text-decoration: none;
+    font-size: 1.4rem;
+    font-weight: 600;
+    transition: all 0.25s ease;
+    cursor: pointer;
+}
+.landing-page__header-nav-link:hover {
+    color: #a78bfa;
+    text-shadow: 0 0 8px rgba(167, 139, 250, 0.4);
+}
+@media (max-width: 768px) {
+    .landing-page__header-nav {
+        display: none;
+    }
+}
+
+/* ==========================================
+   RISK DISCLAIMER REDESIGN
+   ========================================== */
+
+/* 1. Landing Page Disclaimer Card */
+.landing-page__risk-disclaimer {
+    border-top: none !important;
+    width: 100% !important;
+    max-width: 1100px !important;
+    margin: 60px auto 0 auto !important;
+    padding: 0 !important;
+    box-sizing: border-box;
+}
+
+.landing-page__risk-disclaimer-content {
+    background: rgba(22, 12, 45, 0.35) !important;
+    border: 1px solid rgba(167, 139, 250, 0.08) !important;
+    border-radius: 20px !important;
+    padding: 32px !important;
+    box-sizing: border-box;
+    backdrop-filter: blur(10px) !important;
+}
+
+.landing-page__risk-icon {
+    color: #a78bfa !important; /* Yellow/Red -> Lavender */
+    margin-bottom: 12px !important;
+    display: inline-block !important;
+    filter: drop-shadow(0 0 8px rgba(167, 139, 250, 0.3));
+}
+
+.landing-page__risk-disclaimer-title {
+    color: #ffffff !important;
+    font-size: 2rem !important;
+    font-weight: 800 !important;
+    margin: 0 0 16px 0 !important;
+    text-shadow: none !important;
+}
+
+.landing-page__risk-disclaimer-text {
+    font-size: 1.35rem !important;
+    line-height: 1.65 !important;
+    color: #9d9db5 !important;
+}
+
+.landing-page__risk-disclaimer-text p {
+    margin: 0 0 16px 0 !important;
+}
+
+.landing-page__risk-disclaimer-list {
+    margin: 16px 0 0 0 !important;
+    padding-left: 20px !important;
+    list-style-type: disc !important;
+}
+
+.landing-page__risk-disclaimer-list li {
+    margin-bottom: 10px !important;
+    color: #9d9db5 !important;
+}
+
+/* 2. App Workspace Disclaimer Footer Pill */
+.risk-disclaimer-icon {
+    background: rgba(167, 139, 250, 0.08) !important;
+    border: 1px solid rgba(167, 139, 250, 0.15) !important;
+    border-radius: 30px !important;
+    padding: 8px 18px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    color: #a78bfa !important;
+    cursor: pointer !important;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2) !important;
+}
+
+.risk-disclaimer-icon:hover {
+    background: rgba(167, 139, 250, 0.18) !important;
+    border-color: rgba(167, 139, 250, 0.35) !important;
+    color: #ffffff !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 6px 15px rgba(167, 139, 250, 0.15) !important;
+}
+
+.risk-disclaimer-text {
+    font-size: 1.3rem !important;
+    font-weight: 700 !important;
+    color: inherit !important;
+}
+
+/* 3. Popup Redesign */
+.popup_disclaimer {
+    background: rgba(4, 2, 10, 0.7) !important;
+    backdrop-filter: blur(8px) !important;
+    z-index: 9999 !important;
+}
+
+.popup_disclaimer .popup-content {
+    background: linear-gradient(135deg, #0f0822 0%, #060212 100%) !important;
+    border: 1px solid rgba(167, 139, 250, 0.15) !important;
+    border-radius: 24px !important;
+    padding: 40px !important;
+    max-width: 650px !important;
+    box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.7), 0 0 40px rgba(139, 92, 246, 0.1) !important;
+    color: #cbd5e1 !important;
+    position: relative !important;
+}
+
+.popup_disclaimer h2 {
+    color: #ffffff !important;
+    font-size: 2.4rem !important;
+    font-weight: 800 !important;
+    border-bottom: 1px solid rgba(167, 139, 250, 0.1) !important;
+    padding-bottom: 16px !important;
+    margin: 0 0 20px 0 !important;
+}
+
+.popup_disclaimer p {
+    font-size: 1.4rem !important;
+    line-height: 1.7 !important;
+    margin: 0 0 16px 0 !important;
+}
+
+.popup_disclaimer ul {
+    padding-left: 20px !important;
+    margin-bottom: 20px !important;
+}
+
+.popup_disclaimer li {
+    font-size: 1.35rem !important;
+    line-height: 1.6 !important;
+    margin-bottom: 10px !important;
+    list-style-type: disc !important;
+}
+
+.popup_disclaimer .close-button {
+    color: rgba(255, 255, 255, 0.4) !important;
+    font-size: 2.8rem !important;
+    top: 24px !important;
+    right: 24px !important;
+    transition: all 0.2s ease !important;
+    cursor: pointer !important;
+}
+
+.popup_disclaimer .close-button:hover {
+    color: #ef4444 !important;
+    transform: scale(1.15) !important;
+}
