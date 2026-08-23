@@ -4,7 +4,7 @@
   "description": "NaoTrades premium dashboard override workspace",
   "scripts": {
     "dev": "node server.js",
-    "build": "echo 'No build step required'"
+    "build": "mkdir -p dist && cp -r images scripts styles index.html dist/"
   },
   "private": true
 }
