@@ -2,78 +2,132 @@
 
 (function () {
     const DASHBOARD_TEMPLATE = `
-        <div class="db-greeting-section">
-            <h1 class="db-greeting-title">Hello <span class="username">DOT92329066</span> 👋</h1>
-            <p class="db-greeting-subtitle">"Small consistent gains build extraordinary wealth."</p>
-        </div>
+        <!-- Collapsible Sidebar -->
+        <aside class="db-sidebar" id="db-sidebar">
+            <!-- Sidebar Toggle Button -->
+            <button class="db-sidebar-toggle" id="db-sidebar-toggle-btn" aria-label="Toggle Sidebar">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            </button>
 
-        <div class="db-quick-actions-wrapper">
-            <span class="db-quick-actions-label">Quick Actions</span>
-            <div class="db-quick-actions-grid">
-                
-                <!-- Upload Bot -->
-                <div class="db-action-card db-card-upload" id="db-action-upload">
-                    <div class="db-card-arrow">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
-                    </div>
-                    <div class="db-card-icon-container">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 14 1.45-2.9A2 2 0 0 1 9.24 10H20a2 2 0 0 1 1.94 2.5l-1.55 6a2 2 0 0 1-1.94 1.5H4a2 2 0 0 1-2-2V5c0-1.1.9-2 2-2h3.93a2 2 0 0 1 1.66.9l.82 1.2a2 2 0 0 0 1.66.9H18a2 2 0 0 1 2 2v2"/></svg>
-                    </div>
-                    <h2 class="db-card-title">Upload Bot</h2>
-                    <p class="db-card-desc">Import an XML bot from your computer</p>
-                    <a href="javascript:void(0)" class="db-card-link">Open &rarr;</a>
-                </div>
-
-                <!-- Free Bots -->
-                <div class="db-action-card db-card-free" id="db-action-free">
-                    <div class="db-card-arrow">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
-                    </div>
-                    <div class="db-card-icon-container">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>
-                    </div>
-                    <h2 class="db-card-title">Free Bots</h2>
-                    <p class="db-card-desc">Browse ready-made trading strategies</p>
-                    <a href="javascript:void(0)" class="db-card-link">Open &rarr;</a>
-                </div>
-
-                <!-- Bot Editor -->
-                <div class="db-action-card db-card-editor" id="db-action-editor">
-                    <div class="db-card-arrow">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
-                    </div>
-                    <div class="db-card-icon-container">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="14" y="3" rx="1"/><path d="M10 21V8a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h5a1 1 0 0 0 1-1z"/><path d="M15 21v-5a1 1 0 0 0-1-1h-4"/></svg>
-                    </div>
-                    <h2 class="db-card-title">Bot Editor</h2>
-                    <p class="db-card-desc">Build a custom bot with the visual editor</p>
-                    <a href="javascript:void(0)" class="db-card-link">Open &rarr;</a>
-                </div>
-
-                <!-- Quick Strategy -->
-                <div class="db-action-card db-card-strategy" id="db-action-strategy">
-                    <div class="db-card-arrow">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
-                    </div>
-                    <div class="db-card-icon-container">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-                    </div>
-                    <h2 class="db-card-title">Quick Strategy</h2>
-                    <p class="db-card-desc">Start fast with a pre-built strategy template</p>
-                    <a href="javascript:void(0)" class="db-card-link">Open &rarr;</a>
-                </div>
-
+            <!-- Brand / Logo -->
+            <div class="db-sidebar-brand">
+                <span class="brand-logo">N</span>
+                <span class="brand-text">NaoTraders</span>
             </div>
-        </div>
 
-        <div class="db-partner-card">
-            <div class="db-partner-left-space"></div>
-            <div class="db-partner-content">
-                <span class="db-partner-subtitle">Partner Referral</span>
-                <h2 class="db-partner-title">Master Partner share</h2>
+            <!-- Navigation Links -->
+            <nav class="db-sidebar-nav">
+                <a href="javascript:void(0)" class="db-sidebar-nav-item active" id="side-nav-dashboard">
+                    <span class="nav-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="15" rx="1"/></svg>
+                    </span>
+                    <span class="nav-text">Dashboard</span>
+                </a>
+                <a href="javascript:void(0)" class="db-sidebar-nav-item" id="side-nav-builder">
+                    <span class="nav-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="14" y="3" rx="1"/><path d="M10 21V8a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h5a1 1 0 0 0 1-1z"/><path d="M15 21v-5a1 1 0 0 0-1-1h-4"/></svg>
+                    </span>
+                    <span class="nav-text">Bot Editor</span>
+                </a>
+                <a href="javascript:void(0)" class="db-sidebar-nav-item" id="side-nav-free">
+                    <span class="nav-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>
+                    </span>
+                    <span class="nav-text">Free Bots</span>
+                </a>
+                <a href="javascript:void(0)" class="db-sidebar-nav-item" id="side-nav-referral">
+                    <span class="nav-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    </span>
+                    <span class="nav-text">Partner Share</span>
+                </a>
+            </nav>
+
+            <!-- User Footer -->
+            <div class="db-sidebar-user">
+                <div class="user-avatar">U</div>
+                <div class="user-details">
+                    <span class="user-name username">DOT92329066</span>
+                    <span class="user-role">Premium Trader</span>
+                </div>
             </div>
-            <button class="db-partner-btn" onclick="window.open('https://naotraders.com/referral', '_blank')">Earn monthly</button>
-        </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="db-content-area">
+            <div class="db-greeting-section">
+                <h1 class="db-greeting-title">Hello <span class="username">DOT92329066</span> 👋</h1>
+                <p class="db-greeting-subtitle">"Small consistent gains build extraordinary wealth."</p>
+            </div>
+
+            <div class="db-quick-actions-wrapper">
+                <span class="db-quick-actions-label">Quick Actions</span>
+                <div class="db-quick-actions-grid">
+                    
+                    <!-- Upload Bot -->
+                    <div class="db-action-card db-card-upload" id="db-action-upload">
+                        <div class="db-card-arrow">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+                        </div>
+                        <div class="db-card-icon-container">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 14 1.45-2.9A2 2 0 0 1 9.24 10H20a2 2 0 0 1 1.94 2.5l-1.55 6a2 2 0 0 1-1.94 1.5H4a2 2 0 0 1-2-2V5c0-1.1.9-2 2-2h3.93a2 2 0 0 1 1.66.9l.82 1.2a2 2 0 0 0 1.66.9H18a2 2 0 0 1 2 2v2"/></svg>
+                        </div>
+                        <h2 class="db-card-title">Upload Bot</h2>
+                        <p class="db-card-desc">Import an XML bot from your computer</p>
+                        <a href="javascript:void(0)" class="db-card-link">Open &rarr;</a>
+                    </div>
+
+                    <!-- Free Bots -->
+                    <div class="db-action-card db-card-free" id="db-action-free">
+                        <div class="db-card-arrow">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+                        </div>
+                        <div class="db-card-icon-container">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>
+                        </div>
+                        <h2 class="db-card-title">Free Bots</h2>
+                        <p class="db-card-desc">Browse ready-made trading strategies</p>
+                        <a href="javascript:void(0)" class="db-card-link">Open &rarr;</a>
+                    </div>
+
+                    <!-- Bot Editor -->
+                    <div class="db-action-card db-card-editor" id="db-action-editor">
+                        <div class="db-card-arrow">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+                        </div>
+                        <div class="db-card-icon-container">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="14" y="3" rx="1"/><path d="M10 21V8a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h5a1 1 0 0 0 1-1z"/><path d="M15 21v-5a1 1 0 0 0-1-1h-4"/></svg>
+                        </div>
+                        <h2 class="db-card-title">Bot Editor</h2>
+                        <p class="db-card-desc">Build a custom bot with the visual editor</p>
+                        <a href="javascript:void(0)" class="db-card-link">Open &rarr;</a>
+                    </div>
+
+                    <!-- Quick Strategy -->
+                    <div class="db-action-card db-card-strategy" id="db-action-strategy">
+                        <div class="db-card-arrow">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+                        </div>
+                        <div class="db-card-icon-container">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                        </div>
+                        <h2 class="db-card-title">Quick Strategy</h2>
+                        <p class="db-card-desc">Start fast with a pre-built strategy template</p>
+                        <a href="javascript:void(0)" class="db-card-link">Open &rarr;</a>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="db-partner-card">
+                <div class="db-partner-left-space"></div>
+                <div class="db-partner-content">
+                    <span class="db-partner-subtitle">Partner Referral</span>
+                    <h2 class="db-partner-title">Master Partner share</h2>
+                </div>
+                <button class="db-partner-btn" onclick="window.open('https://naotraders.com/referral', '_blank')">Earn monthly</button>
+            </div>
+        </main>
     `;
 
     function initDashboard() {
@@ -95,6 +149,53 @@
         
         // Insert right after tab bar
         dcTabs.insertAdjacentElement('afterend', customDashboard);
+
+        // Sidebar elements reference
+        const sidebar = customDashboard.querySelector('#db-sidebar');
+        const toggleBtn = customDashboard.querySelector('#db-sidebar-toggle-btn');
+
+        if (sidebar && toggleBtn) {
+            // Restore collapsed state from localStorage
+            if (localStorage.getItem('db-sidebar-collapsed') === 'true') {
+                sidebar.classList.add('collapsed');
+            }
+
+            // Bind Sidebar Collapse Toggle
+            toggleBtn.addEventListener('click', () => {
+                sidebar.classList.toggle('collapsed');
+                localStorage.setItem('db-sidebar-collapsed', sidebar.classList.contains('collapsed'));
+            });
+        }
+
+        // Bind Sidebar Navigation Clicks
+        const navDashboard = customDashboard.querySelector('#side-nav-dashboard');
+        const navBuilder = customDashboard.querySelector('#side-nav-builder');
+        const navFree = customDashboard.querySelector('#side-nav-free');
+        const navReferral = customDashboard.querySelector('#side-nav-referral');
+
+        if (navDashboard) {
+            navDashboard.addEventListener('click', () => {
+                const dashboardTab = document.getElementById('id-1');
+                if (dashboardTab) dashboardTab.click();
+            });
+        }
+        if (navBuilder) {
+            navBuilder.addEventListener('click', () => {
+                const botBuilderTab = document.getElementById('id-2');
+                if (botBuilderTab) botBuilderTab.click();
+            });
+        }
+        if (navFree) {
+            navFree.addEventListener('click', () => {
+                const freeBotsTab = document.getElementById('id-3');
+                if (freeBotsTab) freeBotsTab.click();
+            });
+        }
+        if (navReferral) {
+            navReferral.addEventListener('click', () => {
+                window.open('https://naotraders.com/referral', '_blank');
+            });
+        }
 
         // Bind interactive event listeners for action cards
         document.getElementById('db-action-upload').addEventListener('click', () => {
@@ -144,12 +245,32 @@
 
     function updateTabVisibility() {
         const dashboardTab = document.getElementById('id-1');
+        const botBuilderTab = document.getElementById('id-2');
+        const freeBotsTab = document.getElementById('id-3');
         const customDashboard = document.getElementById('custom-dashboard');
         const botDashboard = document.querySelector('.bot-dashboard');
         
         if (!customDashboard || !botDashboard) return;
 
         const isDashboardActive = dashboardTab && dashboardTab.classList.contains('dc-tabs__active');
+        const isBuilderActive = botBuilderTab && botBuilderTab.classList.contains('dc-tabs__active');
+        const isFreeActive = freeBotsTab && freeBotsTab.classList.contains('dc-tabs__active');
+
+        // Sync active side nav highlights
+        const dashboardNav = customDashboard.querySelector('#side-nav-dashboard');
+        const builderNav = customDashboard.querySelector('#side-nav-builder');
+        const freeNav = customDashboard.querySelector('#side-nav-free');
+
+        if (dashboardNav && builderNav && freeNav) {
+            dashboardNav.classList.remove('active');
+            builderNav.classList.remove('active');
+            freeNav.classList.remove('active');
+
+            if (isDashboardActive) dashboardNav.classList.add('active');
+            else if (isBuilderActive) builderNav.classList.add('active');
+            else if (isFreeActive) freeNav.classList.add('active');
+        }
+
         if (isDashboardActive) {
             customDashboard.classList.add('active');
             botDashboard.classList.add('dashboard-active');
