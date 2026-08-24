@@ -72,7 +72,7 @@
                 <span class="db-partner-subtitle">Partner Referral</span>
                 <h2 class="db-partner-title">Master Partner share</h2>
             </div>
-            <button class="db-partner-btn" onclick="window.open('https://naotrades.com/referral', '_blank')">Earn monthly</button>
+            <button class="db-partner-btn" onclick="window.open('https://naotraders.com/referral', '_blank')">Earn monthly</button>
         </div>
     `;
 
