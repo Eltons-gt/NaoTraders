@@ -11,7 +11,7 @@
 
             <!-- Brand / Logo -->
             <div class="db-sidebar-brand">
-                <span class="brand-logo">N</span>
+                <img class="brand-logo-img" src="/images/naotrades.png" alt="NaoTraders Logo" />
                 <span class="brand-text">NaoTraders</span>
             </div>
 

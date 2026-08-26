@@ -707,6 +707,14 @@
     box-shadow: 0 0 15px rgba(139, 92, 246, 0.4);
 }
 
+.brand-logo-img {
+    width: 36px;
+    height: 36px;
+    object-fit: contain;
+    flex-shrink: 0;
+    filter: drop-shadow(0 0 8px rgba(139, 92, 246, 0.4));
+}
+
 .brand-text {
     font-size: 1.8rem;
     font-weight: 800;
