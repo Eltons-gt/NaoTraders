@@ -273,7 +273,7 @@
     }
 
     function updateSimulationAccountLabel() {
-        const switcherRoots = document.querySelectorAll('.account-switcher, .deriv-account-switcher, [data-testid*="account-switcher"]');
+        const switcherRoots = document.querySelectorAll('[class*="account-switcher"], [data-testid*="account-switcher"], [data-testid*="popover_wrapper"], .dc-popover');
         const walkerOptions = { whatToShow: NodeFilter.SHOW_TEXT };
 
         switcherRoots.forEach((root) => {
@@ -284,10 +284,24 @@
                     simulationLabelNodes.set(node, node.textContent);
                 }
                 if (simulationLabelNodes.has(node)) {
-                    node.textContent = isSimulationAccount() ? 'Simulation' : simulationLabelNodes.get(node);
+                    node.textContent = isSimulationAccount() ? 'Virtual' : simulationLabelNodes.get(node);
                 }
             }
         });
+
+        switcherRoots.forEach((root) => {
+            root.querySelectorAll('div, span, button').forEach((element) => {
+                if (element.children.length === 0 && element.textContent.trim() === 'Real') {
+                    element.textContent = isSimulationAccount() ? 'Virtual' : 'Real';
+                }
+            });
+        });
+
+        const switcherButton = document.querySelector('.deriv-account-switcher__button');
+        if (switcherButton) {
+            switcherButton.setAttribute('aria-label', isSimulationAccount() ? 'Virtual simulation account ROT91160344' : 'Deriv account');
+            switcherButton.classList.toggle('nao-virtual-simulation', isSimulationAccount());
+        }
     }
 
     async function loadSimulationBalance() {
