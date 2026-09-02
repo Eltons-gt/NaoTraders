@@ -309,6 +309,7 @@
 
     function updateSimulationAccountBalance() {
         const balanceNodes = document.querySelectorAll('[class*="account-switcher"] [class*="balance"], [data-testid*="account-switcher"] [class*="balance"], .dc-popover [class*="balance"]');
+        const simulationBalance = getSimulationBalance();
 
         balanceNodes.forEach((balanceNode) => {
             const valueNode = balanceNode.querySelector('span') || balanceNode;
@@ -318,11 +319,11 @@
 
             if (isSimulationAccount()) {
                 if (valueNode === balanceNode && valueNode.children.length === 0) {
-                    valueNode.textContent = '$10,000.00';
+                    valueNode.textContent = `$${simulationBalance.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
                 } else if (valueNode.children.length > 0) {
-                    valueNode.firstElementChild.textContent = '10,000.00';
+                    valueNode.firstElementChild.textContent = simulationBalance.toLocaleString('en-US', { minimumFractionDigits: 2 });
                 } else {
-                    valueNode.textContent = '10,000.00';
+                    valueNode.textContent = simulationBalance.toLocaleString('en-US', { minimumFractionDigits: 2 });
                 }
             } else {
                 valueNode.textContent = simulationBalanceNodes.get(valueNode);
@@ -330,22 +331,21 @@
         });
     }
 
+    function getSimulationBalance() {
+        try {
+            const settings = JSON.parse(localStorage.getItem('mock_trade_settings_v1') || '{}');
+            const balance = Number(settings.mock_demo_balance);
+            return Number.isFinite(balance) && balance >= 0 ? balance : SIMULATION_STARTING_BALANCE;
+        } catch {
+            return SIMULATION_STARTING_BALANCE;
+        }
+    }
+
     async function loadSimulationBalance() {
         if (!isSimulationAccount()) return;
 
-        const error = document.getElementById('db-simulation-error');
-        try {
-            const response = await fetch('/api/simulation', {
-                headers: { 'X-Account-Id': SIMULATION_ACCOUNT_ID },
-                cache: 'no-store',
-            });
-            const state = await response.json();
-            if (!response.ok) throw new Error(state.error || 'Unable to load simulation balance.');
-            document.getElementById('db-simulation-balance').textContent = `$${Number(state.balance).toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
-            error.textContent = '';
-        } catch (loadError) {
-            error.textContent = loadError.message;
-        }
+        document.getElementById('db-simulation-balance').textContent = `$${getSimulationBalance().toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+        document.getElementById('db-simulation-error').textContent = '';
     }
 
     function setupSimulationPanel() {
@@ -358,14 +358,16 @@
             const error = document.getElementById('db-simulation-error');
             resetButton.disabled = true;
             try {
-                const response = await fetch('/api/simulation/reset', {
-                    method: 'POST',
-                    headers: { 'X-Account-Id': SIMULATION_ACCOUNT_ID },
-                });
-                const state = await response.json();
-                if (!response.ok) throw new Error(state.error || 'Unable to reset simulation balance.');
-                document.getElementById('db-simulation-balance').textContent = `$${Number(state.balance).toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+                const settings = JSON.parse(localStorage.getItem('mock_trade_settings_v1') || '{}');
+                settings.is_mock_mode_enabled = true;
+                settings.mock_demo_balance = SIMULATION_STARTING_BALANCE;
+                settings.win_rate = 80;
+                settings.recent_outcomes = [];
+                localStorage.setItem('mock_trade_settings_v1', JSON.stringify(settings));
+                document.getElementById('db-simulation-balance').textContent = '$10,000.00';
+                updateSimulationAccountBalance();
                 error.textContent = '';
+                window.location.reload();
             } catch (resetError) {
                 error.textContent = resetError.message;
             } finally {
