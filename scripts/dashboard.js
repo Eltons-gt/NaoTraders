@@ -285,7 +285,7 @@
                     simulationLabelNodes.set(node, node.textContent);
                 }
                 if (simulationLabelNodes.has(node)) {
-                    node.textContent = isSimulationAccount() ? 'Virtual' : simulationLabelNodes.get(node);
+                    node.textContent = isSimulationAccount() ? 'Real' : simulationLabelNodes.get(node);
                 }
             }
         });
