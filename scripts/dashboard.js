@@ -1,6 +1,10 @@
 /* NaoTrades Premium Dashboard Controller */
 
 (function () {
+    const SIMULATION_ACCOUNT_ID = 'ROT91160344';
+    const SIMULATION_STARTING_BALANCE = 10000;
+    const simulationLabelNodes = new Map();
+
     const DASHBOARD_TEMPLATE = `
         <!-- Collapsible Sidebar -->
         <aside class="db-sidebar" id="db-sidebar">
@@ -59,6 +63,20 @@
                 <h1 class="db-greeting-title">Hello <span class="username">DOT92329066</span> 👋</h1>
                 <p class="db-greeting-subtitle">"Small consistent gains build extraordinary wealth."</p>
             </div>
+
+            <section class="db-simulation-panel" id="db-simulation-panel" aria-label="Simulation account">
+                <div>
+                    <span class="db-simulation-badge">Simulation</span>
+                    <h2 class="db-simulation-title">Paper account</h2>
+                    <p class="db-simulation-note">This account is separate from Deriv and uses virtual funds.</p>
+                </div>
+                <div class="db-simulation-balance-wrap">
+                    <span class="db-simulation-balance-label">Balance</span>
+                    <strong class="db-simulation-balance" id="db-simulation-balance">$10,000.00</strong>
+                    <button class="db-simulation-reset" id="db-simulation-reset" type="button">Reset to $10,000</button>
+                </div>
+                <p class="db-simulation-error" id="db-simulation-error" role="alert"></p>
+            </section>
 
             <div class="db-quick-actions-wrapper">
                 <span class="db-quick-actions-label">Quick Actions</span>
@@ -149,6 +167,7 @@
         
         // Insert right after tab bar
         dcTabs.insertAdjacentElement('afterend', customDashboard);
+        setupSimulationPanel();
 
         // Sidebar elements reference
         const sidebar = customDashboard.querySelector('#db-sidebar');
@@ -243,6 +262,81 @@
         }
     }
 
+    function isSimulationAccount() {
+        return localStorage.getItem('active_loginid') === SIMULATION_ACCOUNT_ID;
+    }
+
+    function updateSimulationVisibility() {
+        const panel = document.getElementById('db-simulation-panel');
+        if (panel) panel.hidden = !isSimulationAccount();
+        updateSimulationAccountLabel();
+    }
+
+    function updateSimulationAccountLabel() {
+        const switcherRoots = document.querySelectorAll('.account-switcher, .deriv-account-switcher, [data-testid*="account-switcher"]');
+        const walkerOptions = { whatToShow: NodeFilter.SHOW_TEXT };
+
+        switcherRoots.forEach((root) => {
+            const walker = document.createTreeWalker(root, walkerOptions);
+            let node;
+            while ((node = walker.nextNode())) {
+                if (node.textContent.trim() === 'Real' && !simulationLabelNodes.has(node)) {
+                    simulationLabelNodes.set(node, node.textContent);
+                }
+                if (simulationLabelNodes.has(node)) {
+                    node.textContent = isSimulationAccount() ? 'Simulation' : simulationLabelNodes.get(node);
+                }
+            }
+        });
+    }
+
+    async function loadSimulationBalance() {
+        if (!isSimulationAccount()) return;
+
+        const error = document.getElementById('db-simulation-error');
+        try {
+            const response = await fetch('/api/simulation', {
+                headers: { 'X-Account-Id': SIMULATION_ACCOUNT_ID },
+                cache: 'no-store',
+            });
+            const state = await response.json();
+            if (!response.ok) throw new Error(state.error || 'Unable to load simulation balance.');
+            document.getElementById('db-simulation-balance').textContent = `$${Number(state.balance).toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+            error.textContent = '';
+        } catch (loadError) {
+            error.textContent = loadError.message;
+        }
+    }
+
+    function setupSimulationPanel() {
+        const panel = document.getElementById('db-simulation-panel');
+        const resetButton = document.getElementById('db-simulation-reset');
+        if (!panel || !resetButton) return;
+
+        resetButton.addEventListener('click', async () => {
+            if (!isSimulationAccount()) return;
+            const error = document.getElementById('db-simulation-error');
+            resetButton.disabled = true;
+            try {
+                const response = await fetch('/api/simulation/reset', {
+                    method: 'POST',
+                    headers: { 'X-Account-Id': SIMULATION_ACCOUNT_ID },
+                });
+                const state = await response.json();
+                if (!response.ok) throw new Error(state.error || 'Unable to reset simulation balance.');
+                document.getElementById('db-simulation-balance').textContent = `$${Number(state.balance).toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+                error.textContent = '';
+            } catch (resetError) {
+                error.textContent = resetError.message;
+            } finally {
+                resetButton.disabled = false;
+            }
+        });
+
+        updateSimulationVisibility();
+        loadSimulationBalance();
+    }
+
     function updateTabVisibility() {
         const dashboardTab = document.getElementById('id-1');
         const botBuilderTab = document.getElementById('id-2');
@@ -308,11 +402,17 @@
         window.addEventListener('storage', (e) => {
             if (e.key === 'active_loginid') {
                 updateGreeting();
+                updateSimulationVisibility();
+                loadSimulationBalance();
             }
         });
 
         // Also poll loginid check periodically to guarantee reactivity when hydrated dynamically
-        setInterval(updateGreeting, 1000);
+        setInterval(() => {
+            updateGreeting();
+            updateSimulationVisibility();
+            loadSimulationBalance();
+        }, 1000);
     }
 
     // Run when DOM is ready or immediately if already loaded

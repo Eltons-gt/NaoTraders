@@ -3,6 +3,9 @@ const fs = require('fs');
 const path = require('path');
 
 const PORT = 8080;
+const SIMULATION_ACCOUNT_ID = 'ROT91160344';
+const SIMULATION_STARTING_BALANCE = 10000;
+const simulationAccounts = new Map();
 
 const MIME_TYPES = {
     '.html': 'text/html',
@@ -17,10 +20,91 @@ const MIME_TYPES = {
     '.cur': 'application/octet-stream',
 };
 
+function getSimulationAccount(accountId) {
+    if (!simulationAccounts.has(accountId)) {
+        simulationAccounts.set(accountId, {
+            accountId,
+            balance: SIMULATION_STARTING_BALANCE,
+            trades: [],
+        });
+    }
+
+    return simulationAccounts.get(accountId);
+}
+
+function sendJson(res, statusCode, payload) {
+    res.writeHead(statusCode, {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-store',
+    });
+    res.end(JSON.stringify(payload));
+}
+
+function handleSimulationApi(req, res, url) {
+    if (!url.startsWith('/api/simulation')) return false;
+
+    const accountId = req.headers['x-account-id'];
+    if (accountId !== SIMULATION_ACCOUNT_ID) {
+        sendJson(res, 403, { error: 'Simulation is not available for this account.' });
+        return true;
+    }
+
+    const account = getSimulationAccount(accountId);
+    if (req.method === 'GET' && url === '/api/simulation') {
+        sendJson(res, 200, account);
+        return true;
+    }
+
+    if (req.method === 'POST' && url === '/api/simulation/reset') {
+        account.balance = SIMULATION_STARTING_BALANCE;
+        account.trades = [];
+        sendJson(res, 200, account);
+        return true;
+    }
+
+    if (req.method === 'POST' && url === '/api/simulation/trade') {
+        let body = '';
+        req.on('data', (chunk) => { body += chunk; });
+        req.on('end', () => {
+            try {
+                const trade = JSON.parse(body || '{}');
+                const amount = Number(trade.amount);
+                const profit = Number(trade.profit || 0);
+                if (!Number.isFinite(amount) || amount <= 0 || amount > account.balance) {
+                    sendJson(res, 400, { error: 'Trade amount must be positive and within the simulation balance.' });
+                    return;
+                }
+                if (!Number.isFinite(profit)) {
+                    sendJson(res, 400, { error: 'Trade profit must be a valid number.' });
+                    return;
+                }
+
+                account.balance = Number((account.balance - amount + profit).toFixed(2));
+                account.trades.push({
+                    id: `simulation-${Date.now()}`,
+                    amount,
+                    profit,
+                    result: trade.result === 'win' ? 'win' : 'loss',
+                    createdAt: new Date().toISOString(),
+                });
+                sendJson(res, 200, account);
+            } catch {
+                sendJson(res, 400, { error: 'Invalid simulation trade data.' });
+            }
+        });
+        return true;
+    }
+
+    sendJson(res, 404, { error: 'Simulation endpoint not found.' });
+    return true;
+}
+
 const server = http.createServer((req, res) => {
     console.log(`${req.method} ${req.url}`);
     
     let url = req.url.split('?')[0];
+
+    if (handleSimulationApi(req, res, url)) return;
     
     // Normalize URL paths to filesystem paths
     let filePath = '';
