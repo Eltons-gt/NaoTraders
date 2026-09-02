@@ -293,14 +293,14 @@
         switcherRoots.forEach((root) => {
             root.querySelectorAll('div, span, button').forEach((element) => {
                 if (element.children.length === 0 && element.textContent.trim() === 'Real') {
-                    element.textContent = isSimulationAccount() ? 'Virtual' : 'Real';
+                    element.textContent = isSimulationAccount() ? 'Real' : 'Real';
                 }
             });
         });
 
         const switcherButton = document.querySelector('.deriv-account-switcher__button');
         if (switcherButton) {
-            switcherButton.setAttribute('aria-label', isSimulationAccount() ? 'Virtual simulation account ROT91160344' : 'Deriv account');
+            switcherButton.setAttribute('aria-label', isSimulationAccount() ? 'Real simulation account ROT91160344' : 'Deriv account');
             switcherButton.classList.toggle('nao-virtual-simulation', isSimulationAccount());
         }
 
