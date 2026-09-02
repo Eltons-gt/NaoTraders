@@ -4,6 +4,7 @@
     const SIMULATION_ACCOUNT_ID = 'ROT91160344';
     const SIMULATION_STARTING_BALANCE = 10000;
     const simulationLabelNodes = new Map();
+    const simulationBalanceNodes = new Map();
 
     const DASHBOARD_TEMPLATE = `
         <!-- Collapsible Sidebar -->
@@ -302,6 +303,31 @@
             switcherButton.setAttribute('aria-label', isSimulationAccount() ? 'Virtual simulation account ROT91160344' : 'Deriv account');
             switcherButton.classList.toggle('nao-virtual-simulation', isSimulationAccount());
         }
+
+        updateSimulationAccountBalance();
+    }
+
+    function updateSimulationAccountBalance() {
+        const balanceNodes = document.querySelectorAll('[class*="account-switcher"] [class*="balance"], [data-testid*="account-switcher"] [class*="balance"], .dc-popover [class*="balance"]');
+
+        balanceNodes.forEach((balanceNode) => {
+            const valueNode = balanceNode.querySelector('span') || balanceNode;
+            if (!simulationBalanceNodes.has(valueNode)) {
+                simulationBalanceNodes.set(valueNode, valueNode.textContent);
+            }
+
+            if (isSimulationAccount()) {
+                if (valueNode === balanceNode && valueNode.children.length === 0) {
+                    valueNode.textContent = '$10,000.00';
+                } else if (valueNode.children.length > 0) {
+                    valueNode.firstElementChild.textContent = '10,000.00';
+                } else {
+                    valueNode.textContent = '10,000.00';
+                }
+            } else {
+                valueNode.textContent = simulationBalanceNodes.get(valueNode);
+            }
+        });
     }
 
     async function loadSimulationBalance() {
