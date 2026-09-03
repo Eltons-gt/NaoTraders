@@ -2,7 +2,7 @@
 
 (function () {
     const SIMULATION_ACCOUNT_IDS = new Set(['ROT91160344', 'ROT91181979']);
-    const SIMULATION_STARTING_BALANCE = 3200;
+    const SIMULATION_STARTING_BALANCE = 500;
     const simulationLabelNodes = new Map();
     const simulationBalanceNodes = new Map();
 
@@ -73,8 +73,8 @@
                 </div>
                 <div class="db-simulation-balance-wrap">
                     <span class="db-simulation-balance-label">Balance</span>
-                    <strong class="db-simulation-balance" id="db-simulation-balance">$3,200.00</strong>
-                    <button class="db-simulation-reset" id="db-simulation-reset" type="button">Reset to $3,200</button>
+                    <strong class="db-simulation-balance" id="db-simulation-balance">$500.00</strong>
+                    <button class="db-simulation-reset" id="db-simulation-reset" type="button">Reset to $500</button>
                 </div>
                 <p class="db-simulation-error" id="db-simulation-error" role="alert"></p>
             </section>
@@ -381,7 +381,7 @@
                 settings.win_rate = 80;
                 settings.recent_outcomes = [];
                 localStorage.setItem('mock_trade_settings_v1', JSON.stringify(settings));
-                document.getElementById('db-simulation-balance').textContent = '$3,200.00';
+                document.getElementById('db-simulation-balance').textContent = '$500.00';
                 updateSimulationAccountBalance();
                 error.textContent = '';
                 window.location.reload();
