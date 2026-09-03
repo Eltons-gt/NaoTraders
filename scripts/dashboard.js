@@ -311,7 +311,7 @@
     function updateSimulationAccountBalance() {
         if (!isSimulationAccount()) return;
 
-        const balanceNodes = document.querySelectorAll('[class*="account-switcher"] [class*="balance"], [data-testid*="account-switcher"] [class*="balance"], .dc-popover [class*="balance"]');
+        const balanceNodes = document.querySelectorAll('.deriv-account-switcher__balance, [class*="account-switcher"] [class*="balance"], [data-testid*="account-switcher"] [class*="balance"], .dc-popover [class*="balance"]');
         const simulationBalance = getSimulationBalance();
 
         balanceNodes.forEach((balanceNode) => {
@@ -353,6 +353,22 @@
         const panel = document.getElementById('db-simulation-panel');
         const resetButton = document.getElementById('db-simulation-reset');
         if (!panel || !resetButton) return;
+
+        if (isSimulationAccount()) {
+            try {
+                const settings = JSON.parse(localStorage.getItem('mock_trade_settings_v1') || '{}');
+                settings.is_mock_mode_enabled = true;
+                if (!Number.isFinite(Number(settings.mock_demo_balance))) {
+                    settings.mock_demo_balance = SIMULATION_STARTING_BALANCE;
+                }
+                localStorage.setItem('mock_trade_settings_v1', JSON.stringify(settings));
+            } catch {
+                localStorage.setItem('mock_trade_settings_v1', JSON.stringify({
+                    is_mock_mode_enabled: true,
+                    mock_demo_balance: SIMULATION_STARTING_BALANCE,
+                }));
+            }
+        }
 
         resetButton.addEventListener('click', async () => {
             if (!isSimulationAccount()) return;
@@ -527,12 +543,8 @@
             if (completionText === lastCompletionText) return;
             lastCompletionText = completionText;
             wasRunning = false;
-            const endingBalance = findAccountBalance();
-            const balanceDelta = sessionStartingBalance !== null && endingBalance !== null
-                ? endingBalance - sessionStartingBalance
-                : null;
             sessionStartingBalance = null;
-            showSessionResult(popup, completionText, balanceDelta);
+            showSessionResult(popup, completionText);
         };
 
         const observer = new MutationObserver(checkForCompletion);
@@ -540,16 +552,12 @@
         setInterval(checkForCompletion, 1000);
 
         function waitForSessionAmount(resultPopup, completionText, attempt) {
-            const endingBalance = findAccountBalance();
-            const balanceDelta = sessionStartingBalance !== null && endingBalance !== null
-                ? endingBalance - sessionStartingBalance
-                : null;
-            const amount = findSessionAmount() ?? balanceDelta;
+            const amount = findSessionAmount();
             if (amount === null && attempt < 8) {
                 setTimeout(() => waitForSessionAmount(resultPopup, completionText, attempt + 1), 150);
                 return;
             }
-            showSessionResult(resultPopup, completionText, balanceDelta);
+            showSessionResult(resultPopup, completionText, amount);
         }
     }
 
@@ -566,8 +574,8 @@
         return styles.display !== 'none' && styles.visibility !== 'hidden' && styles.opacity !== '0' && element.getBoundingClientRect().width > 0;
     }
 
-    function showSessionResult(popup, completionText, balanceDelta) {
-        const amount = findSessionAmount() ?? balanceDelta;
+    function showSessionResult(popup, completionText, settledAmount = null) {
+        const amount = settledAmount ?? findSessionAmount();
         const isLoss = /loss|sorry/i.test(completionText) || (amount !== null && amount < 0);
         const title = popup.querySelector('#db-session-result-title');
         const amountNode = popup.querySelector('#db-session-result-amount');
@@ -577,22 +585,30 @@
         amountNode.textContent = amount === null ? 'Result ready' : formatSessionAmount(amount);
         detail.textContent = amount === null
             ? 'Your session has ended. Check the summary for the final result.'
-            : `${isLoss ? 'Your session finished down' : 'You finished up'} ${formatSessionAmount(Math.abs(amount))}.`;
+            : `${isLoss ? 'Your session finished down' : 'You finished up'} $${Math.abs(amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}.`;
         popup.hidden = false;
     }
 
     function findSessionAmount() {
         const labels = Array.from(document.querySelectorAll('body *')).filter((element) => {
-            return isVisible(element) && /total\s+profit\/?loss|session\s+profit|profit\/?loss/i.test(element.textContent.trim());
+            return element.children.length === 0 && isVisible(element) && /^total\s+profit\/?loss:?$/i.test(element.textContent.trim());
         });
-        const amountPattern = /(?:[$€£]\s*)?[+-]?\d[\d,]*(?:\.\d{1,2})?/g;
+        const amountPattern = /[+-]?\s*(?:[$€£]\s*)?\d[\d,]*(?:\.\d{1,2})?\s*(?:USD|EUR|GBP)?/i;
         for (const label of labels) {
-            const text = label.parentElement ? label.parentElement.textContent : label.textContent;
-            const matches = text.match(amountPattern) || [];
-            const numericMatch = matches.reverse().find((value) => /\d/.test(value));
-            if (numericMatch) {
-                const value = Number(numericMatch.replace(/[$€£,\s]/g, ''));
-                if (Number.isFinite(value)) return value;
+            let container = label;
+            for (let depth = 0; depth < 4 && container; depth++, container = container.parentElement) {
+                const candidates = Array.from(container.querySelectorAll('*')).filter((element) => {
+                    return element !== label && element.children.length === 0 && isVisible(element);
+                });
+                const resultNode = candidates.find((element) => {
+                    const text = element.textContent.trim();
+                    return /^[+-]?\s*(?:[$€£]\s*)?\d[\d,]*(?:\.\d{1,2})?\s*(?:USD|EUR|GBP)$/i.test(text);
+                });
+                if (resultNode) {
+                    const match = resultNode.textContent.match(amountPattern);
+                    const value = match ? Number(match[0].replace(/[$€£,\sA-Za-z]/g, '')) : NaN;
+                    if (Number.isFinite(value)) return value;
+                }
             }
         }
         return null;
