@@ -3,8 +3,8 @@ const fs = require('fs');
 const path = require('path');
 
 const PORT = 8080;
-const SIMULATION_ACCOUNT_ID = 'ROT91160344';
-const SIMULATION_STARTING_BALANCE = 10000;
+const SIMULATION_ACCOUNT_IDS = new Set(['ROT91160344', 'ROT91181979']);
+const SIMULATION_STARTING_BALANCE = 3200;
 const simulationAccounts = new Map();
 
 const MIME_TYPES = {
@@ -44,7 +44,7 @@ function handleSimulationApi(req, res, url) {
     if (!url.startsWith('/api/simulation')) return false;
 
     const accountId = req.headers['x-account-id'];
-    if (accountId !== SIMULATION_ACCOUNT_ID) {
+    if (!SIMULATION_ACCOUNT_IDS.has(accountId)) {
         sendJson(res, 403, { error: 'Simulation is not available for this account.' });
         return true;
     }

@@ -1,8 +1,8 @@
 /* Nao Traders Premium Dashboard Controller */
 
 (function () {
-    const SIMULATION_ACCOUNT_ID = 'ROT91160344';
-    const SIMULATION_STARTING_BALANCE = 10000;
+    const SIMULATION_ACCOUNT_IDS = new Set(['ROT91160344', 'ROT91181979']);
+    const SIMULATION_STARTING_BALANCE = 3200;
     const simulationLabelNodes = new Map();
     const simulationBalanceNodes = new Map();
 
@@ -73,8 +73,8 @@
                 </div>
                 <div class="db-simulation-balance-wrap">
                     <span class="db-simulation-balance-label">Balance</span>
-                    <strong class="db-simulation-balance" id="db-simulation-balance">$10,000.00</strong>
-                    <button class="db-simulation-reset" id="db-simulation-reset" type="button">Reset to $10,000</button>
+                    <strong class="db-simulation-balance" id="db-simulation-balance">$3,200.00</strong>
+                    <button class="db-simulation-reset" id="db-simulation-reset" type="button">Reset to $3,200</button>
                 </div>
                 <p class="db-simulation-error" id="db-simulation-error" role="alert"></p>
             </section>
@@ -265,7 +265,7 @@
     }
 
     function isSimulationAccount() {
-        return localStorage.getItem('active_loginid') === SIMULATION_ACCOUNT_ID;
+        return SIMULATION_ACCOUNT_IDS.has(localStorage.getItem('active_loginid'));
     }
 
     function updateSimulationVisibility() {
@@ -301,7 +301,7 @@
 
         const switcherButton = document.querySelector('.deriv-account-switcher__button');
         if (switcherButton) {
-            switcherButton.setAttribute('aria-label', isSimulationAccount() ? 'Real simulation account ROT91160344' : 'Deriv account');
+            switcherButton.setAttribute('aria-label', isSimulationAccount() ? 'Real simulation account' : 'Deriv account');
             switcherButton.classList.toggle('nao-virtual-simulation', isSimulationAccount());
         }
 
@@ -365,7 +365,7 @@
                 settings.win_rate = 80;
                 settings.recent_outcomes = [];
                 localStorage.setItem('mock_trade_settings_v1', JSON.stringify(settings));
-                document.getElementById('db-simulation-balance').textContent = '$10,000.00';
+                document.getElementById('db-simulation-balance').textContent = '$3,200.00';
                 updateSimulationAccountBalance();
                 error.textContent = '';
                 window.location.reload();
