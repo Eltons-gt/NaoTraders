@@ -492,6 +492,16 @@
             if (event.key === 'Escape' && !popup.hidden) closePopup();
         });
 
+        const nativeAlert = window.alert;
+        window.alert = (message) => {
+            const alertText = String(message || '');
+            if (/Session Completed!!!|Stop Loss Hit/i.test(alertText)) {
+                showSessionResult(popup, alertText, null);
+                return;
+            }
+            nativeAlert.call(window, message);
+        };
+
         let lastCompletionText = '';
         let wasRunning = false;
         let sessionStartingBalance = null;
