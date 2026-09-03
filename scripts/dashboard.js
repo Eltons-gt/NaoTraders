@@ -308,6 +308,8 @@
     }
 
     function updateSimulationAccountBalance() {
+        if (!isSimulationAccount()) return;
+
         const balanceNodes = document.querySelectorAll('[class*="account-switcher"] [class*="balance"], [data-testid*="account-switcher"] [class*="balance"], .dc-popover [class*="balance"]');
         const simulationBalance = getSimulationBalance();
 
@@ -325,8 +327,6 @@
                 } else {
                     valueNode.textContent = simulationBalance.toLocaleString('en-US', { minimumFractionDigits: 2 });
                 }
-            } else {
-                valueNode.textContent = simulationBalanceNodes.get(valueNode);
             }
         });
     }
