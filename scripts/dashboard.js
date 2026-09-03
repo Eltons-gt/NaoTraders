@@ -1,4 +1,4 @@
-/* NaoTrades Premium Dashboard Controller */
+/* Nao Traders Premium Dashboard Controller */
 
 (function () {
     const SIMULATION_ACCOUNT_ID = 'ROT91160344';
@@ -16,8 +16,8 @@
 
             <!-- Brand / Logo -->
             <div class="db-sidebar-brand">
-                <img class="brand-logo-img" src="/images/naotrades.png" alt="NaoTraders Logo" />
-                <span class="brand-text">NaoTraders</span>
+                <img class="brand-logo-img" src="/images/naotrades.png" alt="Nao Traders Logo" />
+                <span class="brand-text">Nao Traders</span>
             </div>
 
             <!-- Navigation Links -->
