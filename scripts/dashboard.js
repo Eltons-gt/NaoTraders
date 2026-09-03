@@ -496,7 +496,7 @@
         window.alert = (message) => {
             const alertText = String(message || '');
             if (/Session Completed!!!|Stop Loss Hit/i.test(alertText)) {
-                showSessionResult(popup, alertText, null);
+                waitForSessionAmount(popup, alertText, 0);
                 return;
             }
             nativeAlert.call(window, message);
@@ -505,6 +505,13 @@
         let lastCompletionText = '';
         let wasRunning = false;
         let sessionStartingBalance = null;
+        document.addEventListener('click', (event) => {
+            if (event.target.closest('.animation__run-button, [class*="run-button"]')) {
+                sessionStartingBalance = findAccountBalance();
+                lastCompletionText = '';
+                wasRunning = true;
+            }
+        }, true);
         const checkForCompletion = () => {
             const completionNode = findVisibleCompletionNode();
             const stopButton = document.querySelector('.animation__stop-button, [class*="stop-button"]');
@@ -531,6 +538,19 @@
         const observer = new MutationObserver(checkForCompletion);
         observer.observe(document.body, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ['class', 'style'] });
         setInterval(checkForCompletion, 1000);
+
+        function waitForSessionAmount(resultPopup, completionText, attempt) {
+            const endingBalance = findAccountBalance();
+            const balanceDelta = sessionStartingBalance !== null && endingBalance !== null
+                ? endingBalance - sessionStartingBalance
+                : null;
+            const amount = findSessionAmount() ?? balanceDelta;
+            if (amount === null && attempt < 8) {
+                setTimeout(() => waitForSessionAmount(resultPopup, completionText, attempt + 1), 150);
+                return;
+            }
+            showSessionResult(resultPopup, completionText, balanceDelta);
+        }
     }
 
     function findVisibleCompletionNode() {
