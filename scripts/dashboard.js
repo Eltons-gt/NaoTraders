@@ -358,9 +358,10 @@
             try {
                 const settings = JSON.parse(localStorage.getItem('mock_trade_settings_v1') || '{}');
                 settings.is_mock_mode_enabled = true;
-                if (!Number.isFinite(Number(settings.mock_demo_balance))) {
+                if (!Number.isFinite(Number(settings.mock_demo_balance)) || Number(settings.mock_demo_balance) === 3200) {
                     settings.mock_demo_balance = SIMULATION_STARTING_BALANCE;
                 }
+                settings.win_rate = 80;
                 localStorage.setItem('mock_trade_settings_v1', JSON.stringify(settings));
             } catch {
                 localStorage.setItem('mock_trade_settings_v1', JSON.stringify({
