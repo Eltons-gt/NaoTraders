@@ -169,6 +169,7 @@
         // Insert right after tab bar
         dcTabs.insertAdjacentElement('afterend', customDashboard);
         setupSimulationPanel();
+        setupSessionCompletionPopup();
 
         // Sidebar elements reference
         const sidebar = customDashboard.querySelector('#db-sidebar');
@@ -455,6 +456,133 @@
             updateSimulationVisibility();
             loadSimulationBalance();
         }, 1000);
+    }
+
+    function setupSessionCompletionPopup() {
+        if (document.getElementById('db-session-result')) return;
+
+        const popup = document.createElement('div');
+        popup.id = 'db-session-result';
+        popup.className = 'db-session-result';
+        popup.setAttribute('role', 'dialog');
+        popup.setAttribute('aria-modal', 'true');
+        popup.setAttribute('aria-labelledby', 'db-session-result-title');
+        popup.hidden = true;
+        popup.innerHTML = `
+            <div class="db-session-result-backdrop" data-session-result-close></div>
+            <section class="db-session-result-card">
+                <button class="db-session-result-close" type="button" aria-label="Close session result" data-session-result-close>&times;</button>
+                <div class="db-session-result-mark" aria-hidden="true">&#10003;</div>
+                <p class="db-session-result-kicker">Trading session complete</p>
+                <h2 class="db-session-result-title" id="db-session-result-title">Session complete</h2>
+                <p class="db-session-result-amount" id="db-session-result-amount"></p>
+                <p class="db-session-result-detail" id="db-session-result-detail"></p>
+                <button class="db-session-result-action" type="button" data-session-result-close>Continue trading</button>
+            </section>
+        `;
+        document.body.appendChild(popup);
+
+        const closePopup = () => {
+            popup.hidden = true;
+        };
+        popup.querySelectorAll('[data-session-result-close]').forEach((button) => {
+            button.addEventListener('click', closePopup);
+        });
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape' && !popup.hidden) closePopup();
+        });
+
+        let lastCompletionText = '';
+        let wasRunning = false;
+        let sessionStartingBalance = null;
+        const checkForCompletion = () => {
+            const completionNode = findVisibleCompletionNode();
+            const stopButton = document.querySelector('.animation__stop-button, [class*="stop-button"]');
+            const isRunning = Boolean(stopButton && isVisible(stopButton) && !stopButton.disabled);
+            if (isRunning && !wasRunning) {
+                sessionStartingBalance = findAccountBalance();
+                lastCompletionText = '';
+                wasRunning = true;
+            }
+
+            if (!completionNode || (!wasRunning && !lastCompletionText)) return;
+            const completionText = completionNode.textContent.trim();
+            if (completionText === lastCompletionText) return;
+            lastCompletionText = completionText;
+            wasRunning = false;
+            const endingBalance = findAccountBalance();
+            const balanceDelta = sessionStartingBalance !== null && endingBalance !== null
+                ? endingBalance - sessionStartingBalance
+                : null;
+            sessionStartingBalance = null;
+            showSessionResult(popup, completionText, balanceDelta);
+        };
+
+        const observer = new MutationObserver(checkForCompletion);
+        observer.observe(document.body, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ['class', 'style'] });
+        setInterval(checkForCompletion, 1000);
+    }
+
+    function findVisibleCompletionNode() {
+        return Array.from(document.querySelectorAll('body *')).find((element) => {
+            if (element.children.length > 0 || !isVisible(element)) return false;
+            const text = element.textContent.trim();
+            return /Session Completed!!!|Stop Loss Hit/i.test(text);
+        });
+    }
+
+    function isVisible(element) {
+        const styles = window.getComputedStyle(element);
+        return styles.display !== 'none' && styles.visibility !== 'hidden' && styles.opacity !== '0' && element.getBoundingClientRect().width > 0;
+    }
+
+    function showSessionResult(popup, completionText, balanceDelta) {
+        const amount = findSessionAmount() ?? balanceDelta;
+        const isLoss = /loss|sorry/i.test(completionText) || (amount !== null && amount < 0);
+        const title = popup.querySelector('#db-session-result-title');
+        const amountNode = popup.querySelector('#db-session-result-amount');
+        const detail = popup.querySelector('#db-session-result-detail');
+        popup.classList.toggle('is-loss', isLoss);
+        title.textContent = isLoss ? 'Keep going' : 'Congratulations';
+        amountNode.textContent = amount === null ? 'Result ready' : formatSessionAmount(amount);
+        detail.textContent = amount === null
+            ? 'Your session has ended. Check the summary for the final result.'
+            : `${isLoss ? 'Your session finished down' : 'You finished up'} ${formatSessionAmount(Math.abs(amount))}.`;
+        popup.hidden = false;
+    }
+
+    function findSessionAmount() {
+        const labels = Array.from(document.querySelectorAll('body *')).filter((element) => {
+            return isVisible(element) && /total\s+profit\/?loss|session\s+profit|profit\/?loss/i.test(element.textContent.trim());
+        });
+        const amountPattern = /(?:[$€£]\s*)?[+-]?\d[\d,]*(?:\.\d{1,2})?/g;
+        for (const label of labels) {
+            const text = label.parentElement ? label.parentElement.textContent : label.textContent;
+            const matches = text.match(amountPattern) || [];
+            const numericMatch = matches.reverse().find((value) => /\d/.test(value));
+            if (numericMatch) {
+                const value = Number(numericMatch.replace(/[$€£,\s]/g, ''));
+                if (Number.isFinite(value)) return value;
+            }
+        }
+        return null;
+    }
+
+    function findAccountBalance() {
+        const balanceNodes = Array.from(document.querySelectorAll('.deriv-account-switcher__balance, [class*="account-switcher"] [class*="balance"]'));
+        for (const balanceNode of balanceNodes) {
+            if (!isVisible(balanceNode)) continue;
+            const match = balanceNode.textContent.match(/[+-]?\d[\d,]*(?:\.\d{1,2})?/);
+            if (match) {
+                const value = Number(match[0].replace(/[,\s]/g, ''));
+                if (Number.isFinite(value)) return value;
+            }
+        }
+        return null;
+    }
+
+    function formatSessionAmount(amount) {
+        return `${amount < 0 ? '-' : '+'}$${Math.abs(amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
     }
 
     // Run when DOM is ready or immediately if already loaded

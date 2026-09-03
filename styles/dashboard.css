@@ -18,6 +18,125 @@
     display: flex;
 }
 
+.db-session-result[hidden] {
+    display: none;
+}
+
+.db-session-result {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+    color: #f8fafc;
+}
+
+.db-session-result-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(6, 2, 18, 0.78);
+    backdrop-filter: blur(7px);
+}
+
+.db-session-result-card {
+    position: relative;
+    width: min(100%, 420px);
+    padding: 38px 32px 32px;
+    border: 1px solid rgba(168, 85, 247, 0.5);
+    border-top: 4px solid #a855f7;
+    background: #120a27;
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.48), 0 0 35px rgba(168, 85, 247, 0.18);
+    text-align: center;
+    animation: sessionResultIn 0.28s ease-out;
+}
+
+.db-session-result.is-loss .db-session-result-card {
+    border-color: rgba(255, 122, 144, 0.55);
+    border-top-color: #ff7a90;
+}
+
+.db-session-result-close {
+    position: absolute;
+    top: 12px;
+    right: 14px;
+    width: 32px;
+    height: 32px;
+    border: 0;
+    color: #c7b9d9;
+    background: transparent;
+    cursor: pointer;
+    font-size: 26px;
+    line-height: 1;
+}
+
+.db-session-result-mark {
+    display: grid;
+    place-items: center;
+    width: 54px;
+    height: 54px;
+    margin: 0 auto 18px;
+    border-radius: 50%;
+    color: #120a27;
+    background: #a855f7;
+    font-size: 28px;
+    font-weight: 800;
+}
+
+.db-session-result.is-loss .db-session-result-mark {
+    color: #260a14;
+    background: #ff7a90;
+}
+
+.db-session-result-kicker {
+    margin: 0 0 8px;
+    color: #bda6d8;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+}
+
+.db-session-result-title {
+    margin: 0;
+    color: #ffffff;
+    font-size: 30px;
+}
+
+.db-session-result-amount {
+    margin: 18px 0 8px;
+    color: #c084fc;
+    font-size: 38px;
+    font-weight: 800;
+}
+
+.db-session-result.is-loss .db-session-result-amount {
+    color: #ff9caf;
+}
+
+.db-session-result-detail {
+    min-height: 22px;
+    margin: 0 0 24px;
+    color: #b8aec7;
+    font-size: 15px;
+}
+
+.db-session-result-action {
+    width: 100%;
+    border: 1px solid #a855f7;
+    padding: 12px 18px;
+    color: #ffffff;
+    background: rgba(168, 85, 247, 0.16);
+    cursor: pointer;
+    font: inherit;
+    font-weight: 700;
+}
+
+@keyframes sessionResultIn {
+    from { opacity: 0; transform: translateY(12px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
 .db-simulation-panel {
     display: flex;
     align-items: center;
