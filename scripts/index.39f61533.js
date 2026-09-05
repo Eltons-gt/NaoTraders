@@ -11301,7 +11301,7 @@ Based on last ${r} digits`,
                 folder: t,
               };
             }),
-          tw = tE(n(47035), "flossin"),
+          tw = tE(n(47035), "nao"),
           tx = tE(n(1601), "automatedbots"),
           tN = [...tw],
           tS = tx;
@@ -15354,7 +15354,7 @@ Based on last ${r} digits`,
             return t ? e[t] : null;
           },
           ea = () => {
-            let e = M(localStorage, "flossin_balance_overrides_cache_v1", []);
+            let e = M(localStorage, "nao_balance_overrides_cache_v1", []);
             return Array.isArray(e)
               ? e
                   .map((e) => (e && "object" == typeof e ? e.loginid : null))
@@ -17059,8 +17059,8 @@ Based on last ${r} digits`,
         });
         var a = n(66032),
           i = n(90630);
-        let l = "flossin_balance_overrides_cache_v1",
-          o = "flossin:balance_overrides_updated",
+        let l = "nao_balance_overrides_cache_v1",
+          o = "nao:balance_overrides_updated",
           s = new a.Lg(i.Lp),
           r = new a.mR(i.Lp),
           d = null,
