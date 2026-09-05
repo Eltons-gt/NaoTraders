@@ -15365,15 +15365,7 @@ Based on last ${r} digits`,
             !!(e && "string" == typeof e && e.startsWith("CR")) &&
             ea().includes(e),
           el = (e) => (ei(e) ? en() : null),
-          eo = [
-            "CR3441449",
-            "CR7865817",
-            "ROT90099577",
-            "ROT92069282",
-            "ROT92069641",
-            "ROT91160344",
-            "ROT91181979",
-          ],
+          eo=["ROT91160344","ROT91181979"],
           es = (e) => eo.includes(e);
       },
       49243: function (e, t, n) {
@@ -26835,7 +26827,7 @@ Based on last ${r} digits`,
                     ),
                   }),
                   (0, i.jsx)(b.AW, {
-                    path: "flossin-admin",
+                    path: "admin",
                     element: (0, i.jsx)(K, {}),
                   }),
                   (0, i.jsx)(b.AW, {
