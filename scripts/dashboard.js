@@ -52,7 +52,7 @@
             <div class="db-sidebar-user">
                 <div class="user-avatar">U</div>
                 <div class="user-details">
-                    <span class="user-name username">DOT92329066</span>
+                    <span class="user-name username"></span>
                     <span class="user-role">Premium Trader</span>
                 </div>
             </div>
@@ -61,7 +61,7 @@
         <!-- Main Content Area -->
         <main class="db-content-area">
             <div class="db-greeting-section">
-                <h1 class="db-greeting-title">Hello <span class="username">DOT92329066</span> 👋</h1>
+                <h1 class="db-greeting-title">Hello <span class="username"></span> 👋</h1>
                 <p class="db-greeting-subtitle">"Small consistent gains build extraordinary wealth."</p>
             </div>
 
@@ -259,7 +259,7 @@
     function updateGreeting() {
         const usernameSpan = document.querySelector('#custom-dashboard .username');
         if (usernameSpan) {
-            const activeLoginId = localStorage.getItem('active_loginid') || 'DOT92329066';
+            const activeLoginId = localStorage.getItem('active_loginid') || '';
             usernameSpan.textContent = activeLoginId;
         }
     }

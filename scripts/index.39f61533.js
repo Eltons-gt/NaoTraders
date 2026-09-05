@@ -2085,7 +2085,7 @@
               n = JSON.parse(localStorage.getItem("clientAccounts") || "{}")[t];
             if (
               t &&
-              ((null == n ? void 0 : n.is_virtual) || /^(VR|DEM)/i.test(t))
+              ((null == n ? void 0 : n.is_virtual) || /^(VR|DEM|DOT)/i.test(t))
             ) {
               sessionStorage.setItem("query_param_currency", "demo");
               return;
@@ -8900,7 +8900,7 @@
                   (null === eu.ye || void 0 === eu.ye
                     ? void 0
                     : eu.ye.is_mock_mode_enabled) &&
-                  (0, g.Pj)((0, g.Ke)())
+                  ["ROT91160344", "ROT91181979"].includes((0, g.Ke)())
                 )
                   return this.mockPurchase(e, t);
                 let n = (t) => this.onPurchaseSuccess(t, e, o),
@@ -9041,7 +9041,7 @@
                   (null === eu.ye || void 0 === eu.ye
                     ? void 0
                     : eu.ye.is_mock_mode_enabled) &&
-                  (0, g.Pj)((0, g.Ke)())
+                  ["ROT91160344", "ROT91181979"].includes((0, g.Ke)())
                 )
                   return this.mockPurchase(e, n);
                 let a = r.GL.vh_variables.is_enabled,
@@ -28207,7 +28207,7 @@ Based on last ${r} digits`,
                 ? arguments[0]
                 : "";
             return (
-              e.startsWith("VR") || e.startsWith("DEM")
+              e.startsWith("VR") || e.startsWith("DEM") || e.startsWith("DOT")
             );
           },
           v = () => b(localStorage.getItem(o), {}),
@@ -28433,7 +28433,7 @@ Based on last ${r} digits`,
         let r = "deriv_accounts",
           d = "clientAccounts",
           c = "derivws_target_account_id",
-          u = ["VRTC", "VRT", "VRW", "VR", "DEM"],
+          u = ["VRTC", "VRT", "VRW", "VR", "DEM", "DOT"],
           m = function () {
             let e =
               arguments.length > 0 && void 0 !== arguments[0]
