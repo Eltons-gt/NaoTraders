@@ -320,7 +320,17 @@
                 simulationBalanceNodes.set(valueNode, valueNode.textContent);
             }
 
-            if (isSimulationAccount()) {
+            let isDemoAccountNode = false;
+            let p = balanceNode;
+            for(let i=0; i<4 && p; i++) {
+                if (/(VRTC|DEM|DOT)\d+/i.test(p.textContent)) {
+                    isDemoAccountNode = true;
+                    break;
+                }
+                p = p.parentElement;
+            }
+
+            if (isSimulationAccount() && !isDemoAccountNode) {
                 if (valueNode === balanceNode && valueNode.children.length === 0) {
                     valueNode.textContent = `$${simulationBalance.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
                 } else if (valueNode.children.length > 0) {
@@ -328,6 +338,8 @@
                 } else {
                     valueNode.textContent = simulationBalance.toLocaleString('en-US', { minimumFractionDigits: 2 });
                 }
+            } else if (simulationBalanceNodes.has(valueNode) && isDemoAccountNode) {
+                // Do nothing, let Deriv show the real demo balance
             }
         });
     }
