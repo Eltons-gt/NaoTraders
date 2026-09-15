@@ -17,7 +17,7 @@
             <!-- Brand / Logo -->
             <div class="db-sidebar-brand">
                 <img class="brand-logo-img" src="/images/naotrades.png" alt="Nao Traders Logo" />
-                <span class="brand-text">Nao Traders</span>
+                <span class="brand-text">NaoTraders</span>
             </div>
 
             <!-- Navigation Links -->

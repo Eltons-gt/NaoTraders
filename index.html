@@ -851,6 +851,18 @@ input[type=number] {
 }
 </style>
         <meta charset="UTF-8">
+        <link rel="manifest" href="/manifest.json">
+        <script>
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                    navigator.serviceWorker.register('/sw.js').then(registration => {
+                        console.log('SW registered: ', registration);
+                    }).catch(registrationError => {
+                        console.log('SW registration failed: ', registrationError);
+                    });
+                });
+            }
+        </script>
         <link id="dynamic-favicon" rel="icon" type="image/jpeg" href="/naotrades.jpeg">
         <script defer="" src="https://www.googletagmanager.com/gtm.js?id=GTM-NF7884S"></script><script src="https://apis.google.com/_/scs/abc-static/_/js/k=gapi.lb.en.zhTT8Br0Ho8.O/m=client,picker/rt=j/sv=1/d=1/ed=1/rs=AHpOoo-7LeULGjNQZRvhdu3G71akb6JY6A/cb=gapi.loaded_0?le=scs,fedcm_migration_mod" async=""></script><script id="dbot-survicate" async="" src="https://survey.survicate.com/workspaces/83b651f6b3eca1ab4551d95760fe5deb/web_surveys.js"></script><script>
             // Map domains to their respective favicons

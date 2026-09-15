@@ -4918,7 +4918,7 @@
                         children: [
                           (0, i.jsx)("h2", {
                             className: "cl__welcome-title",
-                            children: "Welcome to Nao Traders",
+                            children: "Welcome to NaoTraders",
                           }),
                           (0, i.jsx)("p", {
                             className: "cl__welcome-sub",
