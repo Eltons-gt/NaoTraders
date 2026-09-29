@@ -1,4 +1,4 @@
-/* Nao Traders Premium Dashboard Controller */
+/* NaoTraders Premium Dashboard Controller */
 
 (function () {
     const SIMULATION_ACCOUNT_IDS = new Set(['ROT91160344', 'ROT91181979']);
@@ -16,7 +16,7 @@
 
             <!-- Brand / Logo -->
             <div class="db-sidebar-brand">
-                <img class="brand-logo-img" src="/images/naotrades.png" alt="Nao Traders Logo" />
+                <img class="brand-logo-img" src="/images/naotrades.png" alt="NaoTraders Logo" />
                 <span class="brand-text">NaoTraders</span>
             </div>
 
@@ -152,7 +152,7 @@
     function initDashboard() {
         const container = document.querySelector('.main__container');
         const dcTabs = document.querySelector('.dc-tabs--main__tabs');
-        
+
         if (!container || !dcTabs) {
             // Retry in case DOM is not fully parsed yet
             setTimeout(initDashboard, 50);
@@ -165,7 +165,7 @@
         const customDashboard = document.createElement('div');
         customDashboard.id = 'custom-dashboard';
         customDashboard.innerHTML = DASHBOARD_TEMPLATE;
-        
+
         // Insert right after tab bar
         dcTabs.insertAdjacentElement('afterend', customDashboard);
         setupSimulationPanel();
@@ -322,7 +322,7 @@
 
             let isDemoAccountNode = false;
             let p = balanceNode;
-            for(let i=0; i<4 && p; i++) {
+            for (let i = 0; i < 4 && p; i++) {
                 if (/(VRTC|DEM|DOT)\d+/i.test(p.textContent)) {
                     isDemoAccountNode = true;
                     break;
@@ -415,7 +415,7 @@
         const freeBotsTab = document.getElementById('id-3');
         const customDashboard = document.getElementById('custom-dashboard');
         const botDashboard = document.querySelector('.bot-dashboard');
-        
+
         if (!customDashboard || !botDashboard) return;
 
         const isDashboardActive = dashboardTab && dashboardTab.classList.contains('dc-tabs__active');
