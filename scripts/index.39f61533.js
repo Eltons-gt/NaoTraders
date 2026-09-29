@@ -2349,23 +2349,27 @@
         };
       n("30645");
       var o = n("58454");
-      let s = { LOCALHOST: 36300, STAGING: 29934, PRODUCTION: 65555 },
+      let s = { LOCALHOST: "34wExKGcosNmrNxUVnpJ9", STAGING: "34wExKGcosNmrNxUVnpJ9", PRODUCTION: "34wExKGcosNmrNxUVnpJ9" },
         r = "force_legacy_oauth_flow",
         d = {
+          "naotraders.com": {
+            legacy_app_id: "34wExKGcosNmrNxUVnpJ9",
+            new_app_id: "34wExKGcosNmrNxUVnpJ9",
+          },
           "www.naotraders.com": {
-            legacy_app_id: 70590,
+            legacy_app_id: "34wExKGcosNmrNxUVnpJ9",
             new_app_id: "34wExKGcosNmrNxUVnpJ9",
           },
           "prepaleolithic-dewayne-armigeral.ngrok-free.dev": {
-            legacy_app_id: 131089,
+            legacy_app_id: "34wExKGcosNmrNxUVnpJ9",
             new_app_id: "34wExKGcosNmrNxUVnpJ9",
           },
           "copytrading.naotraders.com": {
-            legacy_app_id: 70672,
+            legacy_app_id: "34wExKGcosNmrNxUVnpJ9",
             new_app_id: "34wExKGcosNmrNxUVnpJ9",
           },
           "new.naotraders.com": {
-            legacy_app_id: 80069,
+            legacy_app_id: "34wExKGcosNmrNxUVnpJ9",
             new_app_id: "34wExKGcosNmrNxUVnpJ9",
           },
         },
