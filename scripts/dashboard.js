@@ -357,8 +357,14 @@
     async function loadSimulationBalance() {
         if (!isSimulationAccount()) return;
 
-        document.getElementById('db-simulation-balance').textContent = `$${getSimulationBalance().toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
-        document.getElementById('db-simulation-error').textContent = '';
+        const balEl = document.getElementById('db-simulation-balance');
+        if (balEl) {
+            balEl.textContent = `$${getSimulationBalance().toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+        }
+        const errEl = document.getElementById('db-simulation-error');
+        if (errEl) {
+            errEl.textContent = '';
+        }
     }
 
     function setupSimulationPanel() {
@@ -394,12 +400,13 @@
                 settings.win_rate = 80;
                 settings.recent_outcomes = [];
                 localStorage.setItem('mock_trade_settings_v1', JSON.stringify(settings));
-                document.getElementById('db-simulation-balance').textContent = '$500.00';
+                const balEl = document.getElementById('db-simulation-balance');
+                if (balEl) balEl.textContent = '$500.00';
                 updateSimulationAccountBalance();
-                error.textContent = '';
+                if (error) error.textContent = '';
                 window.location.reload();
             } catch (resetError) {
-                error.textContent = resetError.message;
+                if (error) error.textContent = resetError.message;
             } finally {
                 resetButton.disabled = false;
             }

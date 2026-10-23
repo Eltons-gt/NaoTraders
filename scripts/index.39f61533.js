@@ -1362,7 +1362,7 @@
               has_effect: !0,
               primary: !0,
               large: !0,
-              children: (0, a.jsx)(o.Xx, { i18n_default_text: "Refresh" }),
+              text: "Refresh",
             }),
           ],
         });
@@ -1656,9 +1656,9 @@
         },
         N = (e) => {
           let { error_header: t, error_messages: n, ...i } = e;
-          return t && n
+          return t && n && n.length
             ? (0, a.jsx)(A, { header: t, messages: n, ...i })
-            : n
+            : (n && n.length)
               ? (0, a.jsx)(f, { messages: n })
               : (0, a.jsx)(x, {});
         };
