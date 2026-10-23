@@ -4,7 +4,7 @@ const path = require('path');
 
 const PORT = 8080;
 const SIMULATION_ACCOUNT_IDS = new Set(['ROT91160344', 'ROT91181979']);
-const SIMULATION_STARTING_BALANCE = 3200;
+const SIMULATION_STARTING_BALANCE = 500;
 const simulationAccounts = new Map();
 
 const MIME_TYPES = {
