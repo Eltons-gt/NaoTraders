@@ -24,16 +24,113 @@ const MIME_TYPES = {
     '.txt': 'text/plain; charset=utf-8'
 };
 
-const server = http.createServer((req, res) => {
+// Simulation accounts in-memory store
+const DEFAULT_SIMULATION_BALANCE = 500.00;
+const simulationAccounts = new Map();
+
+function getOrCreateSimulationAccount(accountId = 'ROT91160344') {
+    if (!simulationAccounts.has(accountId)) {
+        simulationAccounts.set(accountId, {
+            accountId,
+            balance: DEFAULT_SIMULATION_BALANCE,
+            trades: []
+        });
+    }
+    return simulationAccounts.get(accountId);
+}
+
+function parseJsonBody(req) {
+    return new Promise((resolve) => {
+        let body = '';
+        req.on('data', chunk => { body += chunk; });
+        req.on('end', () => {
+            try {
+                resolve(body ? JSON.parse(body) : {});
+            } catch (e) {
+                resolve({});
+            }
+        });
+    });
+}
+
+const server = http.createServer(async (req, res) => {
+    // Enable CORS for all requests
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+
+    if (req.method === 'OPTIONS') {
+        res.writeHead(204);
+        res.end();
+        return;
+    }
+
     // Parse URL safely
     const reqUrl = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
     let pathname = decodeURIComponent(reqUrl.pathname);
+
+    // Simulation API Endpoints
+    if (pathname === '/api/simulation') {
+        const accountId = reqUrl.searchParams.get('accountId') || 'ROT91160344';
+        const account = getOrCreateSimulationAccount(accountId);
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(account));
+        return;
+    }
+
+    if (pathname === '/api/simulation/reset' && req.method === 'POST') {
+        const body = await parseJsonBody(req);
+        const accountId = body.accountId || reqUrl.searchParams.get('accountId') || 'ROT91160344';
+        const account = getOrCreateSimulationAccount(accountId);
+        account.balance = DEFAULT_SIMULATION_BALANCE;
+        account.trades = [];
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({
+            success: true,
+            accountId: account.accountId,
+            balance: account.balance,
+            trades: account.trades
+        }));
+        return;
+    }
+
+    if (pathname === '/api/simulation/trade' && req.method === 'POST') {
+        const body = await parseJsonBody(req);
+        const accountId = body.accountId || reqUrl.searchParams.get('accountId') || 'ROT91160344';
+        const amount = Number(body.amount) || 0;
+        const profit = Number(body.profit) || 0;
+        const result = body.result || (profit > 0 ? 'win' : 'loss');
+
+        const account = getOrCreateSimulationAccount(accountId);
+        account.balance = Math.max(0, account.balance - amount + profit);
+        const tradeRecord = {
+            id: Date.now(),
+            amount,
+            profit,
+            result,
+            balance: account.balance,
+            timestamp: new Date().toISOString()
+        };
+        account.trades.push(tradeRecord);
+        if (account.trades.length > 50) account.trades.shift();
+
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({
+            success: true,
+            accountId: account.accountId,
+            balance: account.balance,
+            trade: tradeRecord
+        }));
+        return;
+    }
 
     // Resolve file candidate paths
     let candidate = null;
 
     if (pathname === '/' || pathname === '') {
         candidate = path.join(SITE_DIR, 'index.html');
+    } else if (pathname === '/callback' || pathname === '/callback/') {
+        candidate = path.join(SITE_DIR, 'callback.html');
     } else if (pathname.startsWith('/cdn.livechatinc.com/')) {
         candidate = path.join(ROOT_DIR, pathname);
     } else if (pathname.startsWith('/www.naotraders.com/')) {
@@ -75,4 +172,3 @@ server.listen(PORT, () => {
     console.log(`  Local URL: http://localhost:${PORT}`);
     console.log(`===========================================\n`);
 });
-

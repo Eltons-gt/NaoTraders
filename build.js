@@ -43,6 +43,12 @@ if (fs.existsSync(livechatSrc)) {
     copyRecursiveSync(livechatSrc, path.join(DIST_DIR, 'cdn.livechatinc.com'));
 }
 
+// 3b. Copy scripts directory if present in root
+const scriptsSrc = path.join(ROOT_DIR, 'scripts');
+if (fs.existsSync(scriptsSrc)) {
+    copyRecursiveSync(scriptsSrc, path.join(DIST_DIR, 'scripts'));
+}
+
 // 4. Parse .env and inject window.__ENV into dist/index.html
 let envVars = {};
 const envPath = path.join(ROOT_DIR, '.env');
