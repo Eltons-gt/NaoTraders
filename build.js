@@ -43,12 +43,37 @@ if (fs.existsSync(livechatSrc)) {
     copyRecursiveSync(livechatSrc, path.join(DIST_DIR, 'cdn.livechatinc.com'));
 }
 
-// 4. Ensure index.html in dist has clean relative script paths
+// 4. Parse .env and inject window.__ENV into dist/index.html
+let envVars = {};
+const envPath = path.join(ROOT_DIR, '.env');
+if (fs.existsSync(envPath)) {
+    const envContent = fs.readFileSync(envPath, 'utf8');
+    envContent.split('\n').forEach(line => {
+        const trimmed = line.trim();
+        if (trimmed && !trimmed.startsWith('#')) {
+            const idx = trimmed.indexOf('=');
+            if (idx > 0) {
+                const key = trimmed.substring(0, idx).trim();
+                const val = trimmed.substring(idx + 1).trim();
+                envVars[key] = val;
+            }
+        }
+    });
+}
+
+// Also read environment variables passed by host/Vercel (process.env)
+for (const k of ['NEXT_PUBLIC_DERIV_APP_ID', 'NEXT_PUBLIC_DERIV_APP_NAME', 'NEXT_PUBLIC_DERIV_REFERRAL_LINK', 'NEXT_PUBLIC_DERIV_REDIRECT_URI', 'VITE_DERIV_APP_ID']) {
+    if (process.env[k]) {
+        envVars[k] = process.env[k];
+    }
+}
+
 const distIndex = path.join(DIST_DIR, 'index.html');
 if (fs.existsSync(distIndex)) {
     let html = fs.readFileSync(distIndex, 'utf8');
-    // Support both ../cdn.livechatinc.com and ./cdn.livechatinc.com
     html = html.replace(/\.\.\/cdn\.livechatinc\.com\/tracking\.js/g, 'cdn.livechatinc.com/tracking.js');
+    const envScript = `<script>window.__ENV = ${JSON.stringify(envVars)};</script>\n`;
+    html = html.replace('<head>', `<head>\n  ${envScript}`);
     fs.writeFileSync(distIndex, html, 'utf8');
 }
 
