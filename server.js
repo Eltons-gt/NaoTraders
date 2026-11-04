@@ -25,14 +25,19 @@ const MIME_TYPES = {
 };
 
 // Simulation accounts in-memory store
-const DEFAULT_SIMULATION_BALANCE = 500.00;
+const DEFAULT_REAL_SIMULATION_BALANCE = 500.00;
+const DEFAULT_DEMO_SIMULATION_BALANCE = 10000.00;
 const simulationAccounts = new Map();
+
+function isDemoId(id = '') {
+    return id.startsWith('VR') || id.startsWith('DEM') || id.startsWith('DOT');
+}
 
 function getOrCreateSimulationAccount(accountId = 'ROT91160344') {
     if (!simulationAccounts.has(accountId)) {
         simulationAccounts.set(accountId, {
             accountId,
-            balance: DEFAULT_SIMULATION_BALANCE,
+            balance: isDemoId(accountId) ? DEFAULT_DEMO_SIMULATION_BALANCE : DEFAULT_REAL_SIMULATION_BALANCE,
             trades: []
         });
     }
@@ -82,7 +87,7 @@ const server = http.createServer(async (req, res) => {
         const body = await parseJsonBody(req);
         const accountId = body.accountId || reqUrl.searchParams.get('accountId') || 'ROT91160344';
         const account = getOrCreateSimulationAccount(accountId);
-        account.balance = DEFAULT_SIMULATION_BALANCE;
+        account.balance = isDemoId(accountId) ? DEFAULT_DEMO_SIMULATION_BALANCE : DEFAULT_REAL_SIMULATION_BALANCE;
         account.trades = [];
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({
