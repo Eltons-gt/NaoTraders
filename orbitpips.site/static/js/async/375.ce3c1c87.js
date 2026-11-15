@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunktrading_bot_template=self.webpackChunktrading_bot_template||[]).push([["375"],{35431(t,e,a){a.r(e),a.d(e,{default:()=>i});var r=a(74848);a(96540);var s=a(15011);let i=()=>(0,r.jsx)(s.A,{src:"https://charts.deriv.com/deriv",title:"TradingView Charts",className:"tradingview-container"})}}]);
