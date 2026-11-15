@@ -1,20 +1,13 @@
 {
-  "name": "naotraders",
+  "name": "naotraders-site",
   "version": "1.0.0",
-  "description": "NaoTraders - Deriv Trading Platform",
-  "main": "server.js",
+  "description": "Nao Traders site",
   "scripts": {
-    "build": "node build.js",
-    "start": "node server.js",
-    "dev": "node server.js",
-    "serve": "node server.js"
+    "dev": "serve -s . -l 3000",
+    "start": "serve -s . -l 3000",
+    "serve": "serve -s . -l 3000"
   },
-  "keywords": [
-    "naotraders",
-    "deriv",
-    "trading",
-    "bot"
-  ],
-  "author": "NaoTraders",
-  "license": "ISC"
+  "dependencies": {
+    "serve": "^14.2.4"
+  }
 }
