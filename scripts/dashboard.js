@@ -1,8 +1,7 @@
 /**
- * NaoTraders Simulation Management (Inconspicuous Mode)
- * Ensures simulation state is initialized in localStorage and active across layers.
- * - Demo accounts: $10,000.00 USD
- * - Real simulation accounts: $300.00 USD
+ * NaoTraders Simulation Engine & Live WebSocket Interceptor
+ * Intercepts WebSocket balance messages, Deriv balance updates,
+ * and DOM balance renders to enforce simulated balances seamlessly.
  */
 (function () {
     'use strict';
@@ -25,7 +24,8 @@
     }
 
     function isSimulationRealAccount(id) {
-        return SIMULATION_REAL_ACCOUNT_IDS.has(id || getActiveAccountId());
+        const acc = id || getActiveAccountId();
+        return SIMULATION_REAL_ACCOUNT_IDS.has(acc);
     }
 
     function isDemoAccount(id) {
@@ -33,12 +33,19 @@
         return acc.startsWith('VR') || acc.startsWith('DEM') || acc.startsWith('DOT');
     }
 
+    function getSimulatedBalance(loginid) {
+        if (isDemoAccount(loginid)) return DEFAULT_DEMO_BALANCE;
+        if (isSimulationRealAccount(loginid)) return DEFAULT_REAL_BALANCE;
+        return null;
+    }
+
+    // 1. Initialise localStorage state
     function initSimulationState() {
         try {
             const raw = localStorage.getItem('mock_trade_settings_v1');
-            let settings = raw ? JSON.parse(raw) : null;
-            if (!settings || typeof settings !== 'object') {
-                settings = {
+            let s = raw ? JSON.parse(raw) : null;
+            if (!s || typeof s !== 'object') {
+                s = {
                     trading_mode: 'mock',
                     is_mock_mode_enabled: true,
                     mock_demo_balance: DEFAULT_DEMO_BALANCE,
@@ -48,45 +55,24 @@
                     max_consecutive_losses: 4,
                     recent_outcomes: []
                 };
-                localStorage.setItem('mock_trade_settings_v1', JSON.stringify(settings));
             } else {
-                let changed = false;
-                if (!settings.is_mock_mode_enabled) {
-                    settings.is_mock_mode_enabled = true;
-                    changed = true;
-                }
-                if (typeof settings.mock_demo_balance !== 'number' || settings.mock_demo_balance === 500) {
-                    settings.mock_demo_balance = DEFAULT_DEMO_BALANCE;
-                    changed = true;
-                }
-                // Update to $300 USD
-                if (settings.mock_real_balance === 500 || typeof settings.mock_real_balance !== 'number') {
-                    settings.mock_real_balance = DEFAULT_REAL_BALANCE;
-                    changed = true;
-                }
-                if (typeof settings.win_rate !== 'number') {
-                    settings.win_rate = 80;
-                    changed = true;
-                }
-                if (changed) {
-                    localStorage.setItem('mock_trade_settings_v1', JSON.stringify(settings));
-                }
+                s.is_mock_mode_enabled = true;
+                s.mock_demo_balance = DEFAULT_DEMO_BALANCE;
+                s.mock_real_balance = DEFAULT_REAL_BALANCE;
             }
+            localStorage.setItem('mock_trade_settings_v1', JSON.stringify(s));
         } catch (e) {}
-    }
 
-    function syncClientAccounts() {
+        // Synchronize clientAccounts in localStorage
         try {
-            const raw = localStorage.getItem('clientAccounts');
-            if (raw) {
-                const accounts = JSON.parse(raw);
+            const rawAccounts = localStorage.getItem('clientAccounts');
+            if (rawAccounts) {
+                const accounts = JSON.parse(rawAccounts);
                 let changed = false;
-                for (const loginid in accounts) {
-                    if (isDemoAccount(loginid)) {
-                        accounts[loginid].balance = DEFAULT_DEMO_BALANCE;
-                        changed = true;
-                    } else if (isSimulationRealAccount(loginid)) {
-                        accounts[loginid].balance = DEFAULT_REAL_BALANCE;
+                for (const id in accounts) {
+                    const sim = getSimulatedBalance(id);
+                    if (sim !== null) {
+                        accounts[id].balance = sim;
                         changed = true;
                     }
                 }
@@ -97,43 +83,144 @@
         } catch (e) {}
     }
 
-    function removeIntrusivePanels() {
-        const oldPanel = document.getElementById('db-simulation-panel');
-        if (oldPanel) oldPanel.remove();
-        const oldModal = document.getElementById('db-session-result');
-        if (oldModal) oldModal.remove();
-    }
+    initSimulationState();
 
-    window.resetSimulationBalance = function (amount, isDemo) {
-        try {
-            const raw = localStorage.getItem('mock_trade_settings_v1');
-            const s = raw ? JSON.parse(raw) : {};
-            s.is_mock_mode_enabled = true;
-            if (isDemo === true) {
-                s.mock_demo_balance = Number(amount) || DEFAULT_DEMO_BALANCE;
-            } else if (isDemo === false) {
-                s.mock_real_balance = Number(amount) || DEFAULT_REAL_BALANCE;
-            } else {
-                s.mock_demo_balance = DEFAULT_DEMO_BALANCE;
-                s.mock_real_balance = Number(amount) || DEFAULT_REAL_BALANCE;
+    // 2. Intercept Native WebSocket at the browser level
+    const OriginalWebSocket = window.WebSocket;
+    window.WebSocket = function (url, protocols) {
+        const ws = new OriginalWebSocket(url, protocols);
+
+        function modifyMessageData(data) {
+            if (typeof data !== 'string') return data;
+            try {
+                const msg = JSON.parse(data);
+
+                // Intercept balance stream
+                if (msg.msg_type === 'balance' && msg.balance) {
+                    const loginid = msg.balance.loginid || getActiveAccountId();
+                    const sim = getSimulatedBalance(loginid);
+                    if (sim !== null) {
+                        msg.balance.balance = sim;
+                        if (msg.balance.accounts) {
+                            for (const acc in msg.balance.accounts) {
+                                const accSim = getSimulatedBalance(acc);
+                                if (accSim !== null) {
+                                    msg.balance.accounts[acc].balance = accSim;
+                                }
+                            }
+                        }
+                        return JSON.stringify(msg);
+                    }
+                }
+
+                // Intercept authorize response
+                if (msg.msg_type === 'authorize' && msg.authorize) {
+                    const loginid = msg.authorize.loginid;
+                    const sim = getSimulatedBalance(loginid);
+                    if (sim !== null) {
+                        msg.authorize.balance = sim;
+                    }
+                    if (msg.authorize.account_list && Array.isArray(msg.authorize.account_list)) {
+                        msg.authorize.account_list.forEach(acc => {
+                            const accSim = getSimulatedBalance(acc.loginid);
+                            if (accSim !== null && acc.balance !== undefined) {
+                                acc.balance = accSim;
+                            }
+                        });
+                    }
+                    return JSON.stringify(msg);
+                }
+
+                // Intercept get_account_status or get_settings if balance attached
+                if (msg.accounts) {
+                    for (const acc in msg.accounts) {
+                        const accSim = getSimulatedBalance(acc);
+                        if (accSim !== null) {
+                            msg.accounts[acc].balance = accSim;
+                        }
+                    }
+                    return JSON.stringify(msg);
+                }
+            } catch (err) {}
+            return data;
+        }
+
+        // Wrap addEventListener
+        const originalAddEventListener = ws.addEventListener.bind(ws);
+        ws.addEventListener = function (type, listener, options) {
+            if (type === 'message' && typeof listener === 'function') {
+                const wrappedListener = function (event) {
+                    const modifiedData = modifyMessageData(event.data);
+                    if (modifiedData !== event.data) {
+                        Object.defineProperty(event, 'data', {
+                            get: () => modifiedData,
+                            configurable: true
+                        });
+                    }
+                    return listener.apply(this, arguments);
+                };
+                return originalAddEventListener(type, wrappedListener, options);
             }
-            s.recent_outcomes = [];
-            localStorage.setItem('mock_trade_settings_v1', JSON.stringify(s));
-            syncClientAccounts();
-            window.dispatchEvent(new CustomEvent('simulation_balance_updated', { detail: s }));
-            console.log(`[NaoTraders] Simulated balances: Demo $${s.mock_demo_balance.toFixed(2)}, Real $${s.mock_real_balance.toFixed(2)}`);
-        } catch (e) {}
+            return originalAddEventListener(type, listener, options);
+        };
+
+        // Wrap onmessage property
+        let userOnMessage = null;
+        Object.defineProperty(ws, 'onmessage', {
+            get: () => userOnMessage,
+            set: (callback) => {
+                if (typeof callback === 'function') {
+                    userOnMessage = callback;
+                    ws.addEventListener('message', callback);
+                } else {
+                    userOnMessage = null;
+                }
+            },
+            configurable: true
+        });
+
+        return ws;
     };
+
+    // Preserve static WebSocket constants
+    window.WebSocket.CONNECTING = OriginalWebSocket.CONNECTING;
+    window.WebSocket.OPEN = OriginalWebSocket.OPEN;
+    window.WebSocket.CLOSING = OriginalWebSocket.CLOSING;
+    window.WebSocket.CLOSED = OriginalWebSocket.CLOSED;
+    window.WebSocket.prototype = OriginalWebSocket.prototype;
+
+    // 3. Fallback DOM Observer: Ensure visible header/switcher text is overwritten if rendered
+    function checkAndFormatBalances() {
+        const activeId = getActiveAccountId();
+        const sim = getSimulatedBalance(activeId);
+        if (sim === null) return;
+
+        // Target balance display elements in Deriv UI
+        const balanceSelectors = [
+            '.acc-info__balance',
+            '[data-testid="dt_balance"]',
+            '.acc-info__account-type-and-balance',
+            '.account-switcher__balance'
+        ];
+
+        balanceSelectors.forEach(sel => {
+            document.querySelectorAll(sel).forEach(el => {
+                const text = el.textContent || '';
+                // If it doesn't already reflect simulated balance
+                const targetStr = sim.toFixed(2);
+                if (text && !text.includes(targetStr)) {
+                    // Replace balance numbers keeping currency symbol
+                    el.textContent = text.replace(/[\d,]+\.\d{2}/, targetStr);
+                }
+            });
+        });
+    }
 
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', () => {
-            initSimulationState();
-            syncClientAccounts();
-            removeIntrusivePanels();
+            setInterval(checkAndFormatBalances, 250);
         });
     } else {
-        initSimulationState();
-        syncClientAccounts();
-        removeIntrusivePanels();
+        setInterval(checkAndFormatBalances, 250);
     }
 })();
