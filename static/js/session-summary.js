@@ -8,13 +8,16 @@
         lost: 1
     };
     const RUN_BUTTON_SELECTOR = '#db-animation__run-button';
+    const PAUSE_BUTTON_SELECTOR = '#db-animation__pause-button';
+    const RESUME_BUTTON_SELECTOR = '#db-animation__resume-button';
+    const STOP_BUTTON_SELECTOR = '#db-animation__stop-button';
     const BOT_STOP_MESSAGE = /\bBot stopped\b/i;
 
     let overlay = null;
     let focusBeforeOpen = null;
     let runBaseline = null;
     let stopObserver = null;
-    let lastRunButtonLabel = '';
+    let botWasRunning = false;
     let stopSignalHandled = false;
 
     function parseCount(value, label) {
@@ -196,7 +199,10 @@
 
         try {
             showSummary(calculateDelta(sessionBaseline, readDashboardStats()));
-            if (runBaseline === sessionBaseline) runBaseline = null;
+            if (runBaseline === sessionBaseline) {
+                runBaseline = null;
+                botWasRunning = false;
+            }
         } catch (error) {
             if (attempt < 4) {
                 setTimeout(function () { finishSession(attempt + 1, sessionBaseline); }, 200);
@@ -210,6 +216,7 @@
         if (summary) {
             if (showSummary(summary)) {
                 runBaseline = null;
+                botWasRunning = false;
                 stopSignalHandled = true;
                 return;
             }
@@ -233,21 +240,28 @@
         try {
             runBaseline = readDashboardStats();
             stopSignalHandled = false;
-            lastRunButtonLabel = label;
+            botWasRunning = false;
         } catch (error) {
             runBaseline = null;
+            botWasRunning = false;
             console.error('Unable to capture statistics at bot start.', error);
         }
     }
 
-    function checkRunButtonTransition() {
-        const button = document.querySelector(RUN_BUTTON_SELECTOR);
-        if (!button) return;
-        const label = (button.innerText || button.textContent || '').trim();
-        if (runBaseline && /\bStop\b/i.test(lastRunButtonLabel) && /\bRun\b/i.test(label)) {
+    function checkRunControlTransition() {
+        const stopButton = document.querySelector(STOP_BUTTON_SELECTOR);
+        const pauseButton = document.querySelector(PAUSE_BUTTON_SELECTOR);
+        const resumeButton = document.querySelector(RESUME_BUTTON_SELECTOR);
+        if (runBaseline && (stopButton || pauseButton || resumeButton)) {
+            botWasRunning = true;
+            return;
+        }
+
+        const runButton = document.querySelector(RUN_BUTTON_SELECTOR);
+        const runLabel = runButton && (runButton.innerText || runButton.textContent || '').trim();
+        if (runBaseline && botWasRunning && runButton && /\bRun\b/i.test(runLabel)) {
             handleStopSignal();
         }
-        lastRunButtonLabel = label;
     }
 
     function nodeContainsStopMessage(node) {
@@ -267,10 +281,10 @@
                     break;
                 }
             }
-            checkRunButtonTransition();
+            checkRunControlTransition();
         });
         stopObserver.observe(document.body, { childList: true, subtree: true, characterData: true });
-        checkRunButtonTransition();
+        checkRunControlTransition();
     }
 
     window.NaoTradersSessionSummary = {
