@@ -18,7 +18,6 @@
 
     const DEFAULT_REAL_BALANCE = 300.00;
     const DEFAULT_DEMO_BALANCE = 10000.00;
-    const PAPER_STATE_KEY = 'nao_paper_trading_state_v1';
 
     function getActiveAccountId() {
         return localStorage.getItem('active_loginid') || '';
@@ -35,27 +34,8 @@
     }
 
     function getSimulatedBalance(loginid) {
-        const accountId = loginid || getActiveAccountId();
-        if (isDemoAccount(accountId) || isSimulationRealAccount(accountId)) {
-            try {
-                const raw = localStorage.getItem(PAPER_STATE_KEY);
-                if (raw) {
-                    const state = JSON.parse(raw);
-                    if (!state || !state.accounts || typeof state.accounts !== 'object') {
-                        throw new Error('Stored paper-trading data has an unsupported format.');
-                    }
-                    if (state.accounts[accountId]) {
-                        const balance = Number(state.accounts[accountId].balance);
-                        if (Number.isFinite(balance) && balance >= 0) return balance;
-                        throw new Error('Stored paper-trading balance is invalid.');
-                    }
-                }
-            } catch (error) {
-                console.error('Unable to read paper-trading balance.', error);
-                return 0;
-            }
-            return isDemoAccount(accountId) ? DEFAULT_DEMO_BALANCE : DEFAULT_REAL_BALANCE;
-        }
+        if (isDemoAccount(loginid)) return DEFAULT_DEMO_BALANCE;
+        if (isSimulationRealAccount(loginid)) return DEFAULT_REAL_BALANCE;
         return null;
     }
 
@@ -81,9 +61,7 @@
                 s.mock_real_balance = DEFAULT_REAL_BALANCE;
             }
             localStorage.setItem('mock_trade_settings_v1', JSON.stringify(s));
-        } catch (e) {
-            console.error('Unable to initialize simulated trading settings.', e);
-        }
+        } catch (e) {}
 
         // Synchronize clientAccounts in localStorage
         try {
@@ -102,9 +80,7 @@
                     localStorage.setItem('clientAccounts', JSON.stringify(accounts));
                 }
             }
-        } catch (e) {
-            console.error('Unable to synchronize simulated account balances.', e);
-        }
+        } catch (e) {}
     }
 
     initSimulationState();

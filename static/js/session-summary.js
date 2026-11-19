@@ -79,10 +79,7 @@
     };
 
     window.addEventListener('nao:bot-stopped', function (event) {
-        const paperSummary = window.NaoPaperTrading
-            ? window.NaoPaperTrading.getSessionSummary()
-            : null;
-        window.NaoTradersSessionSummary.show(event.detail || paperSummary);
+        window.NaoTradersSessionSummary.show(event.detail);
     });
 
     document.addEventListener('keydown', function (event) {
