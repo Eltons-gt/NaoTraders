@@ -1,0 +1,199 @@
+.session-summary-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 100000;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+    background: rgba(2, 8, 23, .78);
+    backdrop-filter: blur(10px);
+}
+
+.session-summary-overlay[hidden] {
+    display: none;
+}
+
+.session-summary-card {
+    width: min(700px, calc(100vw - 32px));
+    max-height: calc(100vh - 32px);
+    overflow-y: auto;
+    box-sizing: border-box;
+    padding: 52px 48px 42px;
+    border: 1px solid rgba(83, 178, 190, .34);
+    border-radius: 34px;
+    background:
+        radial-gradient(circle at 50% 100%, rgba(45, 212, 191, .09), transparent 38%),
+        linear-gradient(145deg, #172434 0%, #1a2635 58%, #172233 100%);
+    box-shadow:
+        0 28px 80px rgba(0, 0, 0, .48),
+        inset 0 0 48px rgba(33, 49, 70, .24);
+    color: #f8fafc;
+    text-align: center;
+    font-family: Inter, "Segoe UI", Arial, sans-serif;
+}
+
+.session-summary-check {
+    display: grid;
+    place-items: center;
+    width: 86px;
+    height: 86px;
+    margin: 0 auto 28px;
+    border-radius: 50%;
+    background: linear-gradient(145deg, #29c9a9, #13a78e);
+    box-shadow: 0 12px 30px rgba(20, 184, 166, .28);
+    font-size: 44px;
+    font-weight: 300;
+    line-height: 1;
+}
+
+.session-summary-label {
+    margin: 0 0 16px;
+    color: #45d6c2;
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: .48em;
+    text-indent: .48em;
+    text-transform: uppercase;
+}
+
+.session-summary-title {
+    margin: 0;
+    font-size: 43px;
+    line-height: 1.15;
+    letter-spacing: -.02em;
+}
+
+.session-summary-subtitle {
+    margin: 10px 0 42px;
+    color: #8798ae;
+    font-size: 23px;
+}
+
+.session-summary-profit {
+    margin: 0 0 42px;
+    color: #55d9b9;
+    font-size: clamp(48px, 8vw, 78px);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -.045em;
+}
+
+.session-summary-stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+    margin: 0 0 42px;
+}
+
+.session-summary-stat {
+    min-width: 0;
+    min-height: 112px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border: 1px solid rgba(148, 163, 184, .12);
+    border-radius: 19px;
+    background: rgba(11, 18, 29, .64);
+}
+
+.session-summary-stat-label {
+    margin-bottom: 10px;
+    color: #78879b;
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: .12em;
+}
+
+.session-summary-stat-value {
+    font-size: 36px;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.session-summary-stat-value--won {
+    color: #55d9b9;
+}
+
+.session-summary-stat-value--lost {
+    color: #ff707d;
+}
+
+.session-summary-stat-value--rate {
+    color: #54bfe3;
+}
+
+.session-summary-continue {
+    width: 100%;
+    min-height: 78px;
+    border: 0;
+    border-radius: 22px;
+    background: linear-gradient(135deg, #55dcc0 0%, #4ac6b8 55%, #24ad9e 100%);
+    color: #10202b;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 25px;
+    font-weight: 900;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    box-shadow: 0 16px 32px rgba(20, 184, 166, .12);
+}
+
+.session-summary-continue:hover {
+    filter: brightness(1.06);
+}
+
+.session-summary-continue:focus-visible {
+    outline: 3px solid #d6fff7;
+    outline-offset: 4px;
+}
+
+@media (max-width: 620px) {
+    .session-summary-card {
+        padding: 34px 20px 24px;
+        border-radius: 24px;
+    }
+
+    .session-summary-check {
+        width: 68px;
+        height: 68px;
+        margin-bottom: 20px;
+        font-size: 36px;
+    }
+
+    .session-summary-label {
+        font-size: 12px;
+    }
+
+    .session-summary-title {
+        font-size: 32px;
+    }
+
+    .session-summary-subtitle {
+        margin-bottom: 28px;
+        font-size: 17px;
+    }
+
+    .session-summary-profit {
+        margin-bottom: 28px;
+    }
+
+    .session-summary-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        margin-bottom: 24px;
+    }
+
+    .session-summary-stat {
+        min-height: 92px;
+    }
+
+    .session-summary-stat-value {
+        font-size: 30px;
+    }
+
+    .session-summary-continue {
+        min-height: 64px;
+        border-radius: 18px;
+        font-size: 18px;
+    }
+}
